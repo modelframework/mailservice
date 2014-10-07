@@ -44,6 +44,7 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
     {
         prn($mail->dataGetters);
         prn($mail->dataUniters);
+        exit;
         $resArray = [];
         if(isset($mail))
         {
