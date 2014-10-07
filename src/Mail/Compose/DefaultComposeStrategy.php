@@ -43,7 +43,7 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
     public function carveData(MailPart $mail)
     {
         $resArray = [];
-
+        var_dump($mail);
         if(isset($mail))
         {
             $resArray = $mail->getData();
@@ -54,7 +54,7 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
             }
             foreach( $resArray as $tag => $part )
             {
-                prn($tag,$resArray[$tag]);
+//                prn($tag,$resArray[$tag]);
                 try
                 {
                     $resArray[$tag] = $configurators[$tag]->configure($resArray[$tag]);
