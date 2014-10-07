@@ -40,7 +40,6 @@ class HeaderDataGetter extends BaseDataGetter {
      */
     public function fetchData($content, $header)
     {
-        prn($header->toArray());
         return $header->toArray();
     }
 } 
