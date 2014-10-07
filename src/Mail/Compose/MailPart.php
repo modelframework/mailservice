@@ -134,7 +134,6 @@ class MailPart {
             }
             foreach($this->dataGetters as $dataGetter)
             {
-                prn($this->headers->toArray());
                 $resArray[$dataGetter->getTag()] = $dataGetter->fetchData($data, $this->headers);
             }
         }
