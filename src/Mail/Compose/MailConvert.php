@@ -472,13 +472,13 @@ class MailConvert
                     $Iterators = $this::$PartIterators;
                     $iterator = new $Iterators[$iterator]($iteratorSettings);
                     $part->setIterator($iterator);
-                    foreach($setting['data_tags'] as $tag)
-                    {
-                        $Tags = $this::$Tags;
-                        $tagSetting = $Tags[$setting['type']][$tag];
-                        $dataUniter = new $tagSetting['data_uniter']();
-                        $part->addDataUniter($tag, $dataUniter);
-                    }
+//                    foreach($setting['data_tags'] as $tag)
+//                    {
+//                        $Tags = $this::$Tags;
+//                        $tagSetting = $Tags[$setting['type']][$tag];
+//                        $dataUniter = new $tagSetting['data_uniter']();
+//                        $part->addDataUniter($tag, $dataUniter);
+//                    }
                 }
                 foreach($setting['data_tags'] as $tag)
                 {
@@ -496,8 +496,16 @@ class MailConvert
                     {
                         continue;
                     }
-                    $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
-                    $part->addDataGetter($dataGetter);
+                    switch($setting['type'])
+                    {
+                        case MailPart::COMBINER_PART_TYPE:
+                            $dataUniter = new $tagSetting['data_uniter']();
+                            $part->addDataUniter($tag, $dataUniter);
+                        case MailPart::DATA_PART_TYPE:
+                            $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
+                            $part->addDataGetter($dataGetter);
+                            break;
+                    }
                 }
             }
 
