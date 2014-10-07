@@ -42,9 +42,9 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
      */
     public function carveData(MailPart $mail)
     {
-        prn($mail->dataGetters);
-        prn($mail->dataUniters);
-        exit;
+//        prn($mail->dataGetters);
+//        prn($mail->dataUniters);
+//        exit;
         $resArray = [];
         if(isset($mail))
         {
