@@ -54,7 +54,7 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
             }
             foreach( $resArray as $tag => $part )
             {
-                prn($tag,$part);
+                prn($tag,$resArray[$tag]);
                 try
                 {
                     $resArray[$tag] = $configurators[$tag]->configure($resArray[$tag]);
