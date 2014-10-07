@@ -483,8 +483,19 @@ class MailConvert
                 foreach($setting['data_tags'] as $tag)
                 {
                     $Tags = $this::$Tags;
-                    prn($contentType,$Tags,$setting['type'],$tag);
-                    $tagSetting = isset($Tags[$setting['type']][$tag])?$Tags[$setting['type']][$tag]:$Tags['common'][$tag];
+//                    prn($contentType,$Tags,$setting['type'],$tag);
+                    if(isset($Tags[$setting['type']][$tag]))
+                    {
+                        $tagSetting = $Tags[$setting['type']][$tag];
+                    }
+                    elseif(isset($Tags['common'][$tag]))
+                    {
+                        $tagSetting = $Tags['common'][$tag];
+                    }
+                    else
+                    {
+                        continue;
+                    }
                     $dataUniter = new $tagSetting['data_uniter']();
                     $part->addDataUniter($tag, $dataUniter);
                 }
