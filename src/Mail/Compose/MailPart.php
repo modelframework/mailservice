@@ -96,11 +96,11 @@ class MailPart {
      */
     public function addDataGetter(BaseDataGetter $dataGetter)
     {
-        if(!$this->type==self::DATA_PART_TYPE)
-        {
-            trigger_error('wrong type, your mail service settings should be wrong', E_USER_WARNING);
-            return;
-        }
+//        if(!$this->type==self::DATA_PART_TYPE)
+//        {
+//            trigger_error('wrong type, your mail service settings should be wrong', E_USER_WARNING);
+//            return;
+//        }
         $this -> dataGetters[] = $dataGetter;
     }
 
@@ -132,10 +132,10 @@ class MailPart {
             {
                 $data = $parser->parse($data, $this->headers);
             }
-            foreach($this->dataGetters as $dataGetter)
-            {
-                $resArray[$dataGetter->getTag()] = $dataGetter->fetchData($data, $this->headers);
-            }
+        }
+        foreach($this->dataGetters as $dataGetter)
+        {
+            $resArray[$dataGetter->getTag()] = $dataGetter->fetchData($data, $this->headers);
         }
         if($this->type==self::COMBINER_PART_TYPE)
         {

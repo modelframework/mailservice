@@ -42,28 +42,34 @@ class MailConvert
     ];
 
     protected static $Tags = [
-        'header' => [
-            'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+        MailPart::DATA_PART_TYPE => [
+            'text' => [
+                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
+            ],
+
+            'info' => [
+                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+            ],
+
+            'link' => [
+                'data_getter'       => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter',
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+            ]
         ],
 
-        'text' => [
-            'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
-        ],
+        MailPart::COMBINER_PART_TYPE => [],
 
-        'info' => [
-            'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
-        ],
-
-        'link' => [
-            'data_getter'       => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter',
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+        'common' => [
+            'header' => [
+                'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+            ],
         ]
     ];
 
@@ -445,13 +451,13 @@ class MailConvert
             {
                 if($setting['type']==MailPart::DATA_PART_TYPE)
                 {
-                    foreach($setting['data_tags'] as $tag)
-                    {
-                        $Tags = $this::$Tags;
-                        $tagSetting = $Tags[$tag];
-                        $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
-                        $part->addDataGetter($dataGetter);
-                    }
+//                    foreach($setting['data_tags'] as $tag)
+//                    {
+//                        $Tags = $this::$Tags;
+//                        $tagSetting = $Tags[$setting['type']][$tag];
+//                        $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
+//                        $part->addDataGetter($dataGetter);
+//                    }
                     foreach($setting['parser'] as $parser)
                     {
                         $Parsers = self::$BodyParsers;
@@ -466,13 +472,20 @@ class MailConvert
                     $Iterators = $this::$PartIterators;
                     $iterator = new $Iterators[$iterator]($iteratorSettings);
                     $part->setIterator($iterator);
-                    foreach($setting['data_tags'] as $tag)
-                    {
-                        $Tags = $this::$Tags;
-                        $tagSetting = $Tags[$tag];
-                        $dataUniter = new $tagSetting['data_uniter']();
-                        $part->addDataUniter($tag, $dataUniter);
-                    }
+//                    foreach($setting['data_tags'] as $tag)
+//                    {
+//                        $Tags = $this::$Tags;
+//                        $tagSetting = $Tags[$setting['type']][$tag];
+//                        $dataUniter = new $tagSetting['data_uniter']();
+//                        $part->addDataUniter($tag, $dataUniter);
+//                    }
+                }
+                foreach($setting['data_tags'] as $tag)
+                {
+                    $Tags = $this::$Tags;
+                    $tagSetting = isset($Tags[$setting['type']][$tag])?$Tags[$setting['type']][$tag]:$Tags['common'][$tag];
+                    $dataUniter = new $tagSetting['data_uniter']();
+                    $part->addDataUniter($tag, $dataUniter);
                 }
             }
 
