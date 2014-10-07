@@ -483,6 +483,7 @@ class MailConvert
                 foreach($setting['data_tags'] as $tag)
                 {
                     $Tags = $this::$Tags;
+                    prn($Tags);
                     $tagSetting = isset($Tags[$setting['type']][$tag])?$Tags[$setting['type']][$tag]:$Tags['common'][$tag];
                     $dataUniter = new $tagSetting['data_uniter']();
                     $part->addDataUniter($tag, $dataUniter);
