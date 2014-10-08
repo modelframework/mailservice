@@ -31,7 +31,7 @@ class MailPart {
     /**
      * @var Headers
      */
-    protected $headers = null;
+    public $headers = null;
 
     /**
      * @var BaseIterator
