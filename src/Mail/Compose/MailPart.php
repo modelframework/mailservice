@@ -151,9 +151,9 @@ class MailPart {
 
     protected function uniteData($data)
     {
-        prn('part uniter', $data);
+//        prn('part uniter', $data);
         $validKeys = array_keys($this->dataUniters);
-        prn('valid uniters keys',$validKeys);
+//        prn('valid uniters keys',$validKeys);
         $result = [];
         foreach($data as $array)
         {
