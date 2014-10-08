@@ -20,6 +20,7 @@ class MailPart {
 
     const DATA_PART_TYPE = 'DATA_PART';
     const COMBINER_PART_TYPE = 'COMBINTER_PART';
+    const COMMON_PART_TYPE = 'COMMON_PART';
 
     public $type = null;
 
@@ -56,7 +57,7 @@ class MailPart {
 
     function __construct($partType, $contentType)
     {
-        if(!(($partType==self::DATA_PART_TYPE)||($partType==self::COMBINER_PART_TYPE)))
+        if(!in_array($partType,[self::DATA_PART_TYPE, self::COMBINER_PART_TYPE]))
         {
             throw new \Exception('Wrong mail part type. '.$partType.' is not defined');
         }

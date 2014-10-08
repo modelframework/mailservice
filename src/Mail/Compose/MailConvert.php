@@ -41,34 +41,73 @@ class MailConvert
         'BaseIterator' => 'Mail\\Compose\\PartIterator\\BaseIterator'
     ];
 
+//    protected static $Tags = [
+//        MailPart::DATA_PART_TYPE => [
+//
+//        ],
+//
+//        MailPart::COMBINER_PART_TYPE => [],
+//
+//        'common' => [
+//            'header' => [
+//                'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
+//                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
+//                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+//            ],
+//            'text' => [
+//                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
+//                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+//                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
+//            ],
+//
+//            'info' => [
+//                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
+//                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+//                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+//            ],
+//
+//            'link' => [
+//                'data_getter'       => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter',
+//                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+//                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+//            ]
+//        ]
+//    ];
+
     protected static $Tags = [
-        MailPart::DATA_PART_TYPE => [],
-
-        MailPart::COMBINER_PART_TYPE => [],
-
-        'common' => [
-            'header' => [
-                'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
-                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
-                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+        'header' => [
+            'data_getter'       => [
+                'part_type'=>MailPart::COMMON_PART_TYPE,
+                'class' => 'Mail\\Compose\\DataGetter\\HeaderDataGetter'
             ],
-            'text' => [
-                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
-                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
+            'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
+            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+        ],
+        'text' => [
+            'data_getter'       => [
+                'part_type'=>MailPart::DATA_PART_TYPE,
+                'class' => 'Mail\\Compose\\DataGetter\\TextDataGetter'
             ],
+            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
+        ],
 
-            'info' => [
-                'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
-                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+        'info' => [
+            'data_getter'       => [
+                'part_type' => MailPart::DATA_PART_TYPE,
+                'class' => 'Mail\\Compose\\DataGetter\\TextDataGetter'
             ],
+            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+        ],
 
-            'link' => [
-                'data_getter'       => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter',
-                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
-            ]
+        'link' => [
+            'data_getter'       => [
+                'part_type' => MailPart::DATA_PART_TYPE,
+                'class' => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter'
+            ],
+            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
         ]
     ];
 
@@ -246,17 +285,18 @@ class MailConvert
     public static function  getConfigurators()
     {
         $ret = [];
-        foreach(static::$Tags as $tagsArr)
+//        foreach(static::$Tags as $tagsArr)
+//        {
+//            foreach($tagsArr as $tag=>$config)
+//            {
+//                $ret[$tag] = new $config['data_configurator']();
+//            }
+//        }
+        foreach(static::$Tags as $tag=>$config)
         {
-            foreach($tagsArr as $tag=>$config)
-            {
-                if(isset($ret[$tag]))
-                {
-                    throw new \Exception('Mail service has wrong configuration. Setting identical tags for different mail types is forbidden');
-                }
-                $ret[$tag] = new $config['data_configurator']();
-            }
+            $ret[$tag] = new $config['data_configurator']();
         }
+
         return $ret;
     }
 
@@ -492,30 +532,43 @@ class MailConvert
                 {
                     $Tags = $this::$Tags;
 //                    prn($contentType,$Tags,$setting['type'],$tag);
-                    if(isset($Tags[$setting['type']][$tag]))
+//                    if(isset($Tags[$setting['type']][$tag]))
+//                    {
+//                        $tagSetting = $Tags[$setting['type']][$tag];
+//                    }
+//                    elseif(isset($Tags['common'][$tag]))
+//                    {
+//                        $tagSetting = $Tags['common'][$tag];
+//                    }
+//                    else
+//                    {
+//                        throw new \Exception(
+//                            'Tags settings are wrong. Mail service can\'t find setting for tag '.$tag.' either in common or '.$setting['type'].' section.'
+//                        );
+//                    }
+//                    switch($setting['type'])
+//                    {
+//                        case MailPart::COMBINER_PART_TYPE:
+//                            $dataUniter = new $tagSetting['data_uniter']();
+//                            $part->addDataUniter($tag, $dataUniter);
+//                        case MailPart::DATA_PART_TYPE:
+//                            $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
+//                            $part->addDataGetter($dataGetter);
+//                            break;
+//                    }
+                    $tagSetting = $Tags[$tag];
+                    if($setting['type'] == MailPart::COMBINER_PART_TYPE)
                     {
-                        $tagSetting = $Tags[$setting['type']][$tag];
+                        $dataUniter = new $tagSetting['data_uniter']();
+                        $part->addDataUniter($tag, $dataUniter);
                     }
-                    elseif(isset($Tags['common'][$tag]))
+                    if(in_array($tagSetting['data_getter']['part_type'],[MailPart::COMMON_PART_TYPE, $setting['type']]))
                     {
-                        $tagSetting = $Tags['common'][$tag];
+                        $dataGetter = new $tagSetting['data_getter']['class'](['tag' => $tag]);
+                        $part->addDataGetter($dataGetter);
                     }
-                    else
-                    {
-                        throw new \Exception(
-                            'Tags settings are wrong. Mail service can\'t find setting for tag '.$tag.'either in common or '.$setting['type'].' section.'
-                        );
-                    }
-                    switch($setting['type'])
-                    {
-                        case MailPart::COMBINER_PART_TYPE:
-                            $dataUniter = new $tagSetting['data_uniter']();
-                            $part->addDataUniter($tag, $dataUniter);
-                        case MailPart::DATA_PART_TYPE:
-                            $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
-                            $part->addDataGetter($dataGetter);
-                            break;
-                    }
+
+
                 }
             }
 
