@@ -44,7 +44,14 @@ class MailConvert
     protected static $Tags = [
         MailPart::DATA_PART_TYPE => [],
 
-        MailPart::COMBINER_PART_TYPE => [
+        MailPart::COMBINER_PART_TYPE => [],
+
+        'common' => [
+            'header' => [
+                'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
+            ],
             'text' => [
                 'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
                 'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
@@ -62,14 +69,6 @@ class MailConvert
                 'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
                 'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
             ]
-        ],
-
-        'common' => [
-            'header' => [
-                'data_getter'       => 'Mail\\Compose\\DataGetter\\HeaderDataGetter',
-                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
-                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
-            ],
         ]
     ];
 
