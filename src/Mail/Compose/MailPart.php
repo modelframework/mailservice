@@ -140,7 +140,7 @@ class MailPart {
         if($this->type==self::COMBINER_PART_TYPE)
         {
             $childPartData = $this->uniteData($this->iterator->fetchData($this->content));
-            $resArray = $this->uniteData( [ $childPartData, $resArray ] );
+            $resArray = count($resArray)? $this->uniteData( [ $childPartData, $resArray ] ) : $childPartData;
         }
 
         return $resArray;
@@ -157,7 +157,7 @@ class MailPart {
         {
             foreach($array as $tag=>$newData)
             {
-                if(in_array($tag,$validKeys))
+                if(in_array($tag, $validKeys))
                 {
                     $oldData = isset($result[$tag])?$result[$tag]:[];
                     $newData = is_array($newData)?$newData:[$newData];
