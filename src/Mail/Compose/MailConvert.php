@@ -492,7 +492,7 @@ class MailConvert
                 foreach($setting['data_tags'] as $tag)
                 {
                     $Tags = $this::$Tags;
-//                    prn($contentType,$Tags,$setting['type'],$tag);
+                    prn($contentType,$Tags,$setting['type'],$tag);
                     if(isset($Tags[$setting['type']][$tag]))
                     {
                         $tagSetting = $Tags[$setting['type']][$tag];
