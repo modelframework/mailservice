@@ -140,7 +140,7 @@ class MailPart {
         if($this->type==self::COMBINER_PART_TYPE)
         {
             $childPartData = $this->uniteData($this->iterator->fetchData($this->content));
-            $resArray = $this->uniteData( [$resArray, $childPartData ] );
+            $resArray = $this->uniteData( [ $childPartData, $resArray ] );
         }
 
         return $resArray;
