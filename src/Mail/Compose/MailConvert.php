@@ -319,8 +319,8 @@ class MailConvert
             }
             $res['header']['message-id'] = '<' . $MessageId . '@' . $hostName . '>';
         }
-//        prn($res);
-//        exit;
+        prn($res);
+        exit;
         return $res;
     }
 
