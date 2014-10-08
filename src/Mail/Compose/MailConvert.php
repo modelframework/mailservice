@@ -42,7 +42,9 @@ class MailConvert
     ];
 
     protected static $Tags = [
-        MailPart::DATA_PART_TYPE => [
+        MailPart::DATA_PART_TYPE => [],
+
+        MailPart::COMBINER_PART_TYPE => [
             'text' => [
                 'data_getter'       => 'Mail\\Compose\\DataGetter\\TextDataGetter',
                 'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
@@ -61,8 +63,6 @@ class MailConvert
                 'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
             ]
         ],
-
-        MailPart::COMBINER_PART_TYPE => [],
 
         'common' => [
             'header' => [
@@ -492,7 +492,7 @@ class MailConvert
                 foreach($setting['data_tags'] as $tag)
                 {
                     $Tags = $this::$Tags;
-                    prn($contentType,$Tags,$setting['type'],$tag);
+//                    prn($contentType,$Tags,$setting['type'],$tag);
                     if(isset($Tags[$setting['type']][$tag]))
                     {
                         $tagSetting = $Tags[$setting['type']][$tag];
@@ -503,7 +503,6 @@ class MailConvert
                     }
                     else
                     {
-                        prn('heare');
                         throw new \Exception(
                             'Tags settings are wrong. Mail service can\'t find setting for tag '.$tag.'either in common or '.$setting['type'].' section.'
                         );
