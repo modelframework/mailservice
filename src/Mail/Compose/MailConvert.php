@@ -247,9 +247,16 @@ class MailConvert
     public static function  getConfigurators()
     {
         $ret = [];
-        foreach(static::$Tags as $tag=>$config)
+        foreach(static::$Tags as $tagsArr)
         {
-            $ret[$tag] = new $config['data_configurator']();
+            foreach($tagsArr as $tag=>$config)
+            {
+                if(isset($ret[$tag]))
+                {
+                    throw new \Exception('Mail service has wrong configuration. Setting identical tags for different mail types is forbidden');
+                }
+                $ret[$tag] = new $config['data_configurator']();
+            }
         }
         return $ret;
     }

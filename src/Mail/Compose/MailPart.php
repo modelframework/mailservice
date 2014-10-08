@@ -125,9 +125,9 @@ class MailPart {
     public function getData()
     {
         $resArray = [];
+        $data = $this -> content;
         if($this->type==self::DATA_PART_TYPE)
         {
-            $data = $this -> content;
             foreach($this->parsers as $parser)
             {
                 $data = $parser->parse($data, $this->headers);
@@ -139,7 +139,8 @@ class MailPart {
         }
         if($this->type==self::COMBINER_PART_TYPE)
         {
-            $resArray = $this->uniteData($this->iterator->fetchData($this->content));
+            $childPartData = $this->uniteData($this->iterator->fetchData($this->content));
+            $resArray = $this->uniteData( [$resArray, $childPartData ] );
         }
 
         return $resArray;
