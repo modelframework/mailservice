@@ -504,8 +504,9 @@ class MailConvert
                     else
                     {
                         prn('heare');
-                        throw new \Exception('Tags settings are wrong. Mail service can\'t find setting
-                        for tag '.$tag.'either in common or '.$setting['type'].' section.');
+                        throw new \Exception(
+                            'Tags settings are wrong. Mail service can\'t find setting for tag '.$tag.'either in common or '.$setting['type'].' section.'
+                        );
                     }
                     switch($setting['type'])
                     {
