@@ -52,14 +52,23 @@ abstract class BaseTransport
         try
         {
             $protocolName         = '\\Zend\\Mail\\Storage\\' . $this -> setting[ 'protocol_name' ];
+//            prn($protocolName);
+//            prn($this -> setting);
+//            exit;
+
             $this -> transport = new $protocolName( $this -> setting[ 'protocol_settings' ] );
         }
         catch ( \Exception $ex )
         {
+//            prn('open transport problem');
+//            prn($ex->getMessage());
+//            exit;
             //create checking exception to output normal view, that describes problem to user
             throw $ex;
 //            throw new \Exception( 'wrong mail server sync connection' );
         }
+//        prn('connection opened');
+//        exit;
     }
 
     protected function closeTransport()
@@ -74,11 +83,13 @@ abstract class BaseTransport
         $uids      = array_diff( $uids, $exceptProtocolUids );
         $this->lastSyncSuccessful = true;
 
+
         foreach ( $uids as $uid )
         {
             try
             {
                 $rawMail = $this -> transport -> getMessage( $this -> transport -> getNumberByUniqueId( $uid ) );
+//                prn($rawMail);
 
                 $newMail = $this->convertor->convertMailToInternalFormat($rawMail);
 
@@ -89,9 +100,12 @@ abstract class BaseTransport
             }
             catch(\Exception $ex)
             {
+//                prn($ex->getMessage());
+//                exit;
                 $this->lastSyncSuccessful = false;
             }
         }
+//        exit;
         return $mailArray;
     }
 
