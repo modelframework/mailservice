@@ -14,7 +14,7 @@ use \Mail\Compose\MailConvert;
  *
  * @author KSV
  */
-class MailService implements ServiceLocatorAwareInterface
+class MailService implements ServiceLocatorAwareInterface, MailServiceInterface
 {
 
     const PURPOSE_SEND = 'Send';
