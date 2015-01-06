@@ -191,6 +191,21 @@ class MailConvert
                     'header'
                 ]
             ],
+            'related' =>[
+                'type' => MailPart::COMBINER_PART_TYPE,
+                'iterator' => [
+                    'BaseIterator' => [
+                        'order' => 'asc',
+                        'count' => 0,
+                    ]
+                ],
+                'data_tags' => [
+                    'text',
+                    'info',
+                    'link',
+                    'header'
+                ]
+            ],
             'mixed' =>[
                 'type' => MailPart::COMBINER_PART_TYPE,
                 'iterator' => [
@@ -341,7 +356,9 @@ class MailConvert
      */
     public function convertMailToInternalFormat(ReceiveMessage $rawMail)
     {
+//        prn('before');
         $parts = $this->parseMailParts($rawMail);
+//        prn('after',$parts);
         $res = $this->composeMailStrategy->carveData($parts);
 
         if(!isset($res['header']['message-id']))
@@ -405,6 +422,7 @@ class MailConvert
         $part = $this->configurePart($contentType);
         if(is_null($part))
         {
+//            prn('first');
             return $part;
         }
 
@@ -446,6 +464,7 @@ class MailConvert
                 switch($this -> attachmentProcessingType)
                 {
                     case self::AttachmentNone:
+//                        prn('second');
                         return null;
                         break;
                     case self::AttachmentInfo:
@@ -471,6 +490,7 @@ class MailConvert
         $part->setContent( $partResult );
         $part->setHeaders( $rawMailHeaders );
 
+//        prn('third');
         return $part;
     }
 
@@ -480,6 +500,7 @@ class MailConvert
      */
     private function configurePart($contentType)
     {
+//        prn($contentType);
         $contentType = explode('/', $contentType);
         $part = null;
         if(isset($contentType[0])&&in_array($contentType[0],array_keys($this::$typeSettings)))

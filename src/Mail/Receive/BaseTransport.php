@@ -84,14 +84,18 @@ abstract class BaseTransport
         $this->lastSyncSuccessful = true;
 
 
+//        $uids = ['3AB4A466-FC5E-11E3-89A8-00215AD99F24'];
         foreach ( $uids as $uid )
         {
             try
             {
+//                prn($uid);
                 $rawMail = $this -> transport -> getMessage( $this -> transport -> getNumberByUniqueId( $uid ) );
-//                prn($rawMail);
+//                prn($rawMail->getContent());
 
                 $newMail = $this->convertor->convertMailToInternalFormat($rawMail);
+//                prn($newMail);
+//                exit;
 
                 $newMail['protocol_ids'] = [ $this -> setting[ 'id' ] => $uid ];
                 $header_id = $newMail['header']['message-id'];
