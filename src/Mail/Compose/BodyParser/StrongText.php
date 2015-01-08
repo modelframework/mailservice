@@ -8,18 +8,16 @@
 
 namespace Mail\Compose\BodyParser;
 
-
 use Zend\Mail\Headers;
 
 class StrongText implements ParserInterface
 {
-
     /**
      * parsing text
      *
-     * @param  string $data
-     * @param  Headers $header order witch parts should be seen
-     * @param  Array $additionalParams array of additional params
+     * @param string  $data
+     * @param Headers $header           order witch parts should be seen
+     * @param Array   $additionalParams array of additional params
      *
      * @return Array
      */
@@ -31,6 +29,7 @@ class StrongText implements ParserInterface
 _____________________________________________________
 ';
         $data = $additionalInfo.$data;
+
         return $data;
     }
 }

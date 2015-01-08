@@ -10,7 +10,6 @@ namespace Mail;
 
 trait MailServiceAwareTrait
 {
-
     /**
      * @var MailServiceInterface
      */
@@ -32,9 +31,8 @@ trait MailServiceAwareTrait
     public function getMailServiceVerify()
     {
         $_mailService = $this->getMailService();
-        if ( $_mailService == null || !$_mailService instanceof MailServiceInterface )
-        {
-            throw new \Exception( 'MailService does not set in the MailServiceAware instance of ' . get_class( $this ) );
+        if ($_mailService == null || !$_mailService instanceof MailServiceInterface) {
+            throw new \Exception('MailService does not set in the MailServiceAware instance of '.get_class($this));
         }
 
         return $_mailService;
@@ -45,8 +43,8 @@ trait MailServiceAwareTrait
      *
      * @return $this
      */
-    public function setMailService( MailServiceInterface $mailService )
+    public function setMailService(MailServiceInterface $mailService)
     {
         $this->_mailService = $mailService;
     }
-} 
+}

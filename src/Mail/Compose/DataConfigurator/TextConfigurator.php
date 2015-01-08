@@ -8,28 +8,25 @@
 
 namespace Mail\Compose\DataConfigurator;
 
-
-class TextConfigurator extends BaseConfigurator {
-
+class TextConfigurator extends BaseConfigurator
+{
     /**
-     * @param mixed $tagData
+     * @param  mixed $tagData
      * @return mixed
      */
-    function configure($tagData)
+    public function configure($tagData)
     {
-        if(is_array($tagData))
-        {
+        if (is_array($tagData)) {
             $textArray = $tagData;
             $text = '';
             $devide = '
             ';
-            foreach($textArray as $textPart)
-            {
+            foreach ($textArray as $textPart) {
                 $text = $text.$devide.$textPart;
             }
             $tagData = $text;
         }
+
         return $tagData;
     }
-
-} 
+}

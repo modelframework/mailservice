@@ -8,25 +8,24 @@
 
 namespace Mail\Compose\BodyParser;
 
-
 use Zend\Mail\Headers;
 
 class RTF implements ParserInterface
 {
-
     /**
      * parsing text
      *
-     * @param  string $data
-     * @param  Headers $header order witch parts should be seen
-     * @param  Array $additionalParams array of additional params
+     * @param string  $data
+     * @param Headers $header           order witch parts should be seen
+     * @param Array   $additionalParams array of additional params
      *
      * @return Array
      */
     public function parse($data, $header, $additionalParams = null)
     {
-        if (!strlen($data))
+        if (!strlen($data)) {
             return "";
+        }
 
         // Create empty stack array.
         $document = "";
@@ -45,17 +44,24 @@ class RTF implements ParserInterface
 
                     // If it is another backslash or nonbreaking space or hyphen,
                     // then the character is plain text and add it to the output stream.
-                    if ($nc == '\\' && rtf_isPlainText($stack[$j])) $document .= '\\';
-                    elseif ($nc == '~' && rtf_isPlainText($stack[$j])) $document .= ' ';
-                    elseif ($nc == '_' && rtf_isPlainText($stack[$j])) $document .= '-';
+                    if ($nc == '\\' && rtf_isPlainText($stack[$j])) {
+                        $document .= '\\';
+                    } elseif ($nc == '~' && rtf_isPlainText($stack[$j])) {
+                        $document .= ' ';
+                    } elseif ($nc == '_' && rtf_isPlainText($stack[$j])) {
+                        $document .= '-';
+                    }
                     // If it is an asterisk mark, add it to the stack.
-                    elseif ($nc == '*') $stack[$j]["*"] = true;
+                    elseif ($nc == '*') {
+                        $stack[$j]["*"] = true;
+                    }
                     // If it is a single quote, read next two characters that are the hexadecimal notation
                     // of a character we should add to the output stream.
                     elseif ($nc == "'") {
                         $hex = substr($data, $i + 2, 2);
-                        if (rtf_isPlainText($stack[$j]))
+                        if (rtf_isPlainText($stack[$j])) {
                             $document .= html_entity_decode("&#".hexdec($hex).";");
+                        }
                         //Shift the pointer.
                         $i += 2;
                         // Since, we’ve found the alphabetic character, the next characters are control word
@@ -71,22 +77,26 @@ class RTF implements ParserInterface
                             // then we’re still reading the control word. If there were digits, we should stop
                             // since we reach the end of the control word.
                             if ($nc >= 'a' && $nc <= 'z' || $nc >= 'A' && $nc <= 'Z') {
-                                if (empty($param))
+                                if (empty($param)) {
                                     $word .= $nc;
-                                else
+                                } else {
                                     break;
+                                }
                                 // If it is a digit, store the parameter.
-                            } elseif ($nc >= '0' && $nc <= '9')
+                            } elseif ($nc >= '0' && $nc <= '9') {
                                 $param .= $nc;
+                            }
                             // Since minus sign may occur only before a digit parameter, check whether
                             // $param is empty. Otherwise, we reach the end of the control word.
                             elseif ($nc == '-') {
-                                if (empty($param))
+                                if (empty($param)) {
                                     $param .= $nc;
-                                else
+                                } else {
                                     break;
-                            } else
+                                }
+                            } else {
                                 break;
+                            }
                         }
                         // Shift the pointer on the number of read characters.
                         $i += $m - 1;
@@ -101,8 +111,9 @@ class RTF implements ParserInterface
                             case "u":
                                 $toText .= html_entity_decode("&#x".dechex($param).";");
                                 $ucDelta = @$stack[$j]["uc"];
-                                if ($ucDelta > 0)
+                                if ($ucDelta > 0) {
                                     $i += $ucDelta;
+                                }
                                 break;
                             // Select line feeds, spaces and tabs.
                             case "par": case "page": case "column": case "line": case "lbr":
@@ -132,8 +143,9 @@ class RTF implements ParserInterface
                                 break;
                         }
                         // Add data to the output stream if required.
-                        if (rtf_isPlainText($stack[$j]))
+                        if (rtf_isPlainText($stack[$j])) {
                             $document .= $toText;
+                        }
                     }
 
                     $i++;
@@ -153,8 +165,9 @@ class RTF implements ParserInterface
                 case '\0': case '\r': case '\f': case '\n': break;
                 // Add other data to the output stream if required.
                 default:
-                    if (rtf_isPlainText($stack[$j]))
+                    if (rtf_isPlainText($stack[$j])) {
                         $document .= $c;
+                    }
                     break;
             }
         }

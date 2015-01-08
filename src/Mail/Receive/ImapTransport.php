@@ -2,7 +2,7 @@
 
 namespace Mail\Receive;
 
-use \RecursiveIteratorIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Description of IMAPMAil
@@ -11,82 +11,61 @@ use \RecursiveIteratorIterator;
  *
  * @author KSV
  */
-class IMAPTransport extends BaseTransport
+class ImapTransport extends BaseTransport
 {
     protected $mainFolder = null;
 
     //
     protected function fetchFolders()
     {
-        throw new Exception( 'not implemented' );
+        throw new Exception('not implemented');
     }
 
     //fetch mails from the biggest folder
-    public function fetchAll( $exceptProtocolUids = [ ], $type = null )
+    public function fetchAll($exceptProtocolUids = [ ], $type = null)
     {
         parent::openTransport();
 
-        $folders      = new \RecursiveIteratorIterator( $this -> transport -> getFolders(), \RecursiveIteratorIterator::SELF_FIRST );
+        $folders      = new \RecursiveIteratorIterator($this->transport->getFolders(), \RecursiveIteratorIterator::SELF_FIRST);
         $biggestCount = 0;
-        foreach ( $folders as $folder )
-        {
-            try
-            {
-                if ( $folder -> isSelectable() )
-                {
-                    $this -> transport -> selectFolder( $folder -> getGlobalName() );
-                    $newBiggestCount = count( $this -> transport -> getUniqueId() );
-                    if ( $biggestCount < $newBiggestCount )
-                    {
+        foreach ($folders as $folder) {
+            try {
+                if ($folder->isSelectable()) {
+                    $this->transport->selectFolder($folder->getGlobalName());
+                    $newBiggestCount = count($this->transport->getUniqueId());
+                    if ($biggestCount < $newBiggestCount) {
                         $biggestCount       = $newBiggestCount;
-                        $this -> mainFolder = $folder;
+                        $this->mainFolder = $folder;
                     }
-                }
-                else
-                {
+                } else {
                     continue;
                 }
-            }
-            catch ( \Exception $ex )
-            {
-                
+            } catch (\Exception $ex) {
             }
         }
 
-        if ( isset( $this -> mainFolder ) && ($biggestCount > 0) )
-        {
-            try
-            {
-                $this -> transport -> selectFolder( $this -> mainFolder -> getGlobalName() );
+        if (isset($this->mainFolder) && ($biggestCount > 0)) {
+            try {
+                $this->transport->selectFolder($this->mainFolder->getGlobalName());
+            } catch (\Exception $ex) {
             }
-            catch ( \Exception $ex )
-            {
-                
-            }
-        }
-        else
-        {
+        } else {
             return array();
         }
 
-        foreach ( $exceptProtocolUids as $key => $pUid )
-        {
-//            prn($mainFolder == substr( $pUid, 0, strlen( $mainFolder ) ));
-            if ( $this -> mainFolder == substr( $pUid, 0, strlen( $this -> mainFolder ) ) )
-            {
-                $exceptProtocolUids[ $key ] = substr( $pUid, strlen( $this -> mainFolder ) );
-            }
-            else
-            {
-                unset( $exceptProtocolUids[ $key ] );
+        foreach ($exceptProtocolUids as $key => $pUid) {
+            //            prn($mainFolder == substr( $pUid, 0, strlen( $mainFolder ) ));
+            if ($this->mainFolder == substr($pUid, 0, strlen($this->mainFolder))) {
+                $exceptProtocolUids[ $key ] = substr($pUid, strlen($this->mainFolder));
+            } else {
+                unset($exceptProtocolUids[ $key ]);
 //                $exceptProtocolUids[ $key ] = null;
             }
         }
-        $mailArray = parent::fetchAll( $exceptProtocolUids, $type );
+        $mailArray = parent::fetchAll($exceptProtocolUids, $type);
 
-        foreach($mailArray as $key=>$mail)
-        {
-            $mail['protocol_ids'][$this -> setting[ 'id' ]] = $this->mainFolder.$mail['protocol_ids'][$this -> setting[ 'id' ]];
+        foreach ($mailArray as $key => $mail) {
+            $mail['protocol_ids'][$this->setting[ 'id' ]] = $this->mainFolder.$mail['protocol_ids'][$this->setting[ 'id' ]];
             $mailArray[$key] = $mail;
         }
         parent::closeTransport();
@@ -94,8 +73,8 @@ class IMAPTransport extends BaseTransport
         return $mailArray;
     }
 
-    protected function getSettingUid( $uid )
+    protected function getSettingUid($uid)
     {
-        return [ $this -> setting -> id() => $this -> mainFolder . $uid ];
+        return [ $this->setting->id() => $this->mainFolder.$uid ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Mail\Receive;
 
-use \Zend\Mail\Storage\Message;
+use Zend\Mail\Storage\Message;
 use Mail\Compose\MailConvert;
 
 /**
@@ -12,12 +12,10 @@ use Mail\Compose\MailConvert;
  */
 abstract class BaseTransport
 {
-
     /**
      * @var \Mail\Compose\MailConvert
      */
     protected $convertor = null;
-
 
     /**
      * @var null|bool
@@ -34,12 +32,11 @@ abstract class BaseTransport
      */
     protected $setting      = null;
 
-    public function __construct( Array $setting, MailConvert $convertor )
+    public function __construct(Array $setting, MailConvert $convertor)
     {
-        $this -> setting = $setting;
-        $this -> convertor = $convertor;
+        $this->setting = $setting;
+        $this->convertor = $convertor;
     }
-
 
     public function lastSyncIsSuccessful()
     {
@@ -49,18 +46,15 @@ abstract class BaseTransport
     //fetch all Mails
     protected function openTransport()
     {
-        try
-        {
-            $protocolName         = '\\Zend\\Mail\\Storage\\' . $this -> setting[ 'protocol_name' ];
+        try {
+            $protocolName         = '\\Zend\\Mail\\Storage\\'.$this->setting[ 'protocol_name' ];
 //            prn($protocolName);
 //            prn($this -> setting);
 //            exit;
 
-            $this -> transport = new $protocolName( $this -> setting[ 'protocol_settings' ] );
-        }
-        catch ( \Exception $ex )
-        {
-//            prn('open transport problem');
+            $this->transport = new $protocolName($this->setting[ 'protocol_settings' ]);
+        } catch (\Exception $ex) {
+            //            prn('open transport problem');
 //            prn($ex->getMessage());
 //            exit;
             //create checking exception to output normal view, that describes problem to user
@@ -73,38 +67,33 @@ abstract class BaseTransport
 
     protected function closeTransport()
     {
-        $this -> transport -> close();
+        $this->transport->close();
     }
 
-    public function fetchAll( $exceptProtocolUids = [ ] )
+    public function fetchAll($exceptProtocolUids = [ ])
     {
         $mailArray = [ ];
-        $uids      = $this -> transport -> getUniqueId();
-        $uids      = array_diff( $uids, $exceptProtocolUids );
+        $uids      = $this->transport->getUniqueId();
+        $uids      = array_diff($uids, $exceptProtocolUids);
         $this->lastSyncSuccessful = true;
 
-
 //        $uids = ['3AB4A466-FC5E-11E3-89A8-00215AD99F24'];
-        foreach ( $uids as $uid )
-        {
-            try
-            {
-//                prn($uid);
-                $rawMail = $this -> transport -> getMessage( $this -> transport -> getNumberByUniqueId( $uid ) );
+        foreach ($uids as $uid) {
+            try {
+                //                prn($uid);
+                $rawMail = $this->transport->getMessage($this->transport->getNumberByUniqueId($uid));
 //                prn($rawMail->getContent());
 
                 $newMail = $this->convertor->convertMailToInternalFormat($rawMail);
 //                prn($newMail);
 //                exit;
 
-                $newMail['protocol_ids'] = [ $this -> setting[ 'id' ] => $uid ];
+                $newMail['protocol_ids'] = [ $this->setting[ 'id' ] => $uid ];
                 $header_id = $newMail['header']['message-id'];
 
                 $mailArray[ $header_id ] = $newMail;
-            }
-            catch(\Exception $ex)
-            {
-//                prn($ex->getMessage());
+            } catch (\Exception $ex) {
+                //                prn($ex->getMessage());
 //                exit;
                 $this->lastSyncSuccessful = false;
             }

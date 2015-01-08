@@ -8,13 +8,11 @@
 
 namespace Mail\Compose\DataGetter;
 
-
-class TextDataGetter extends BaseDataGetter {
-
-    function __construct($params)
+class TextDataGetter extends BaseDataGetter
+{
+    public function __construct($params)
     {
-        if(!in_array('tag',array_keys($params)))
-        {
+        if (!in_array('tag', array_keys($params))) {
             throw new \Exception('Wrong data getter configuration');
         }
         $this->tag = $params['tag'];
@@ -33,8 +31,8 @@ class TextDataGetter extends BaseDataGetter {
     /**
      * get attachments from common mail array if exists
      *
-     * @param  string $content
-     * @param  Array $header
+     * @param string $content
+     * @param Array  $header
      *
      * @return Object
      */
@@ -42,4 +40,4 @@ class TextDataGetter extends BaseDataGetter {
     {
         return $content;
     }
-} 
+}

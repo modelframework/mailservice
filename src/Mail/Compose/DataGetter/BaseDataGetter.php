@@ -8,15 +8,13 @@
 
 namespace Mail\Compose\DataGetter;
 
-
-abstract class BaseDataGetter {
-
+abstract class BaseDataGetter
+{
     protected $tag = null;
 
-    function __construct($params)
+    public function __construct($params)
     {
-        if(!in_array('tag',array_keys($params)))
-        {
+        if (!in_array('tag', array_keys($params))) {
             throw new \Exception('Wrong data getter configuration');
         }
         $this->tag = $params['tag'];
@@ -35,10 +33,10 @@ abstract class BaseDataGetter {
     /**
      * get attachments from common mail array if exists
      *
-     * @param  string $content
-     * @param  Array $header
+     * @param string $content
+     * @param Array  $header
      *
      * @return Object
      */
     abstract public function fetchData($content, $header);
-} 
+}

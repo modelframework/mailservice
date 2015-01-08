@@ -8,19 +8,17 @@
 
 namespace Mail\Compose\DataUniter;
 
-
-class BaseUniter {
-
+class BaseUniter
+{
     public function __construct($params = null)
     {
     }
 
-
     /**
      * return merged data array
      *
-     * @param  Array $newData
-     * @param  Array $oldData
+     * @param Array $newData
+     * @param Array $oldData
      *
      * @return null|['text'=>[], 'header'=>[], 'info'=>[], 'attachment'=>[]]
      */
@@ -28,5 +26,4 @@ class BaseUniter {
     {
         return array_merge($newData, $oldData);
     }
-
-} 
+}

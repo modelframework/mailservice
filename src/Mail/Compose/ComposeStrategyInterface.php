@@ -2,11 +2,8 @@
 
 namespace Mail\Compose;
 
-use Wepo\Lib\Mail\Compose\MailComposeInterface;
 use Zend\Mime\Message;
 use Zend\Mime\Mime;
-use Zend\Mime\Part;
-
 
 /**
  * Description of ComposeStrategyInterface
@@ -18,30 +15,26 @@ use Zend\Mime\Part;
  */
 interface ComposeStrategyInterface
 {
-
     /**
      * carves mail data by tags and returns
      * tagged array
      *
-     * @param  MailPart $mail
+     * @param MailPart $mail
      *
      * return mail object of type you wish
      * @return Array
      */
     public function carveData(MailPart $mail);
 
-
-
     /**
      * pack tagged array of data to mime mail
      *
      *
-     * @param  Array $mail
+     * @param Array $mail
      *
      * return array of data that will be converted to
      * send message
      * @return Array
      */
-    public function packData( $mail);
-
+    public function packData($mail);
 }

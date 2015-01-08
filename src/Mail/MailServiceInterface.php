@@ -21,10 +21,9 @@ interface MailServiceInterface
      * @return Receive\BaseTransport|Send\BaseTransport
      * @throws \Exception
      */
-    public function getGateway( $purpose, $protocolName, Array $setting, $settingId = null );
-
+    public function getGateway($purpose, $protocolName, Array $setting, $settingId = null);
 
     public function getServiceLocator();
 
-    public function setServiceLocator( ServiceLocatorInterface $serviceLocator );
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator);
 }

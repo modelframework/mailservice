@@ -3,7 +3,6 @@
 namespace Mail\Send;
 
 use Wepo\Model\Mail;
-use \Zend\Mail\Storage\Message;
 //////
 use Zend\Mail\Transport\Smtp;
 use Zend\Mail\Transport\SmtpOptions;
@@ -17,7 +16,6 @@ use Zend\Mail\Transport\SmtpOptions;
  */
 class SMTPTransport extends BaseTransport
 {
-
     /**
      * @var SmtpTransport
      */
@@ -26,35 +24,31 @@ class SMTPTransport extends BaseTransport
 
     protected function openTransport()
     {
-        try
-        {
-            $this -> transport = new Smtp();
-            $this -> transport -> setOptions( new SmtpOptions( $this -> setting['protocol_settings'] ) );
-        }
-        catch ( \Exception $ex )
-        {
-            throw new \Exception( 'Wrong mail server send connection. Check connection settings or asc administrator' );
+        try {
+            $this->transport = new Smtp();
+            $this->transport->setOptions(new SmtpOptions($this->setting['protocol_settings']));
+        } catch (\Exception $ex) {
+            throw new \Exception('Wrong mail server send connection. Check connection settings or asc administrator');
         }
     }
 
     protected function closeTransport()
     {
-        $this -> transport -> disconnect();
+        $this->transport->disconnect();
     }
 
     /**
      * send mail
      *
      * array or object of type you set while initialize service
-     * @param  Object|array $mail
+     * @param Object|array $mail
      *
      * @throws \Exception $ex
      *
      * @return Mail
      */
-    public function sendMail( $mail )
+    public function sendMail($mail)
     {
         return parent::sendMail($mail);
     }
-
 }

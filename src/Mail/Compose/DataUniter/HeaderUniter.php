@@ -8,20 +8,19 @@
 
 namespace Mail\Compose\DataUniter;
 
-
-class HeaderUniter extends BaseUniter {
-
+class HeaderUniter extends BaseUniter
+{
     /**
      * return merged data array
      *
-     * @param  Array $newData
-     * @param  Array $oldData
+     * @param Array $newData
+     * @param Array $oldData
      *
      * @return null|['text'=>[], 'header'=>[], 'info'=>[], 'attachment'=>[]]
      */
     public function uniteData($newData, $oldData)
     {
-//        prn('uniter', $newData, $oldData);
+        //        prn('uniter', $newData, $oldData);
         return $newData;
     }
-} 
+}

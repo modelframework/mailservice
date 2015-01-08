@@ -8,22 +8,19 @@
 
 namespace Mail\Compose\DataConfigurator;
 
-
-class BaseConfigurator {
-
-//    function __counstructor()
+class BaseConfigurator
+{
+    //    function __counstructor()
 //    {
 //
 //    }
 
     /**
-     * @param mixed $tagData
+     * @param  mixed $tagData
      * @return mixed
      */
-    function configure($tagData)
+    public function configure($tagData)
     {
         return $tagData;
     }
-
-
-} 
+}

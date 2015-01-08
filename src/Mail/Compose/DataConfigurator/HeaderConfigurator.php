@@ -8,9 +8,8 @@
 
 namespace Mail\Compose\DataConfigurator;
 
-
-class HeaderConfigurator extends BaseConfigurator {
-
+class HeaderConfigurator extends BaseConfigurator
+{
     protected $emailParseRegExp = '/\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}\b/i';
     protected $messageIdParseRegExp = '/\<.*?\>/';
 
@@ -30,36 +29,34 @@ class HeaderConfigurator extends BaseConfigurator {
     ];
 
     /**
-     * @param mixed $tagData
+     * @param  mixed $tagData
      * @return mixed
      */
-    function configure($tagData)
+    public function configure($tagData)
     {
         $headers = $tagData;
         $newHeaders = [];
-        foreach($headers as $name => $header)
-        {
+        foreach ($headers as $name => $header) {
             $checkname = strtolower(trim($name));
-            if(in_array($checkname,$this->headersToReturn))
-            {
-                switch($checkname)
-                {
+            if (in_array($checkname, $this->headersToReturn)) {
+                switch ($checkname) {
                     case "to":
                     case "from":
                     case "bb":
                     case "cc":
                     case "reply-to":
-                        preg_match_all($this->emailParseRegExp,$header,$out,PREG_PATTERN_ORDER);
+                        preg_match_all($this->emailParseRegExp, $header, $out, PREG_PATTERN_ORDER);
                         $header = $out[0];
                         break;
                     case "references":
-                        preg_match_all($this->messageIdParseRegExp,$header,$out,PREG_PATTERN_ORDER);
+                        preg_match_all($this->messageIdParseRegExp, $header, $out, PREG_PATTERN_ORDER);
                         $header = $out[0];
                         break;
                 }
                 $newHeaders[$checkname] = $header;
             }
         }
+
         return $newHeaders;
     }
-} 
+}

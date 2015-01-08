@@ -9,20 +9,21 @@ namespace Mail\Receive;
  *
  * @author KSV
  */
-class POP3Transport extends BaseTransport
+class Pop3Transport extends BaseTransport
 {
     public function fetchFolders()
     {
-        return null;
+        return;
     }
 
     //return all letters (send and inbox)
-    public function fetchAll( $exceptProtocolUids = [ ] )
+    public function fetchAll($exceptProtocolUids = [ ])
     {
         parent::openTransport();
 
-        $mailArray = parent::fetchAll( $exceptProtocolUids);
+        $mailArray = parent::fetchAll($exceptProtocolUids);
         parent::closeTransport();
+
         return $mailArray;
     }
 }

@@ -8,13 +8,11 @@
 
 namespace Mail\Compose\DataGetter;
 
-
-class AttachmentDataGetter extends BaseDataGetter {
-
-    function __construct($params)
+class AttachmentDataGetter extends BaseDataGetter
+{
+    public function __construct($params)
     {
-        if(!in_array('tag',array_keys($params)))
-        {
+        if (!in_array('tag', array_keys($params))) {
             throw new \Exception('Wrong data getter configuration');
         }
         $this->tag = $params['tag'];
@@ -33,20 +31,20 @@ class AttachmentDataGetter extends BaseDataGetter {
     /**
      * get attachments from common mail array if exists
      *
-     * @param  string $content
-     * @param  string $header
+     * @param string $content
+     * @param string $header
      *
      * @return Object
      */
     public function fetchData($content, $header)
     {
-//        prn(getcwd());
+        //        prn(getcwd());
 //
 //        prn($header->toArray());
 //        prn($mailArray['body']);
 
 //        $data = $mailArray['body'];
-        $fileName = $header -> get('content-type')->getParameter('name');
+        $fileName = $header->get('content-type')->getParameter('name');
 //        prn($fileName);
 //        $file = fopen($fileName, 'w');
 //        fwrite($file, $content);
@@ -54,4 +52,4 @@ class AttachmentDataGetter extends BaseDataGetter {
 
         return [ $fileName => $content ];
     }
-} 
+}

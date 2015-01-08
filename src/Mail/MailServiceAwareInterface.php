@@ -3,7 +3,6 @@ namespace Mail;
 
 interface MailServiceAwareInterface
 {
-
     /**
      * @return MailServiceInterface
      */
@@ -20,6 +19,5 @@ interface MailServiceAwareInterface
      *
      * @return $this
      */
-    public function setMailService( MailServiceInterface $authService );
-
+    public function setMailService(MailServiceInterface $authService);
 }

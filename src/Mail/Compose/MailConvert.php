@@ -18,28 +18,32 @@ use Zend\Mail\Message as SendMessage;
  */
 class MailConvert
 {
-    const AttachmentFiles   = 'FILES';
-    const AttachmentInfo    = 'INFO';
-    const AttachmentNone    = 'NONE';
 
-    private static $attachmentTypes = [
+    const AttachmentFiles = 'FILES';
+    const AttachmentInfo = 'INFO';
+    const AttachmentNone = 'NONE';
+
+    private static $attachmentTypes
+        = [
             'application',
             'image',
             'audio',
             'video'
-    ];
+        ];
 
-    protected static $BodyParsers = [
-        'File'          =>  'Mail\\Compose\\BodyParser\\File',
-        'HTML'          =>  'Mail\\Compose\\BodyParser\\HTML',
-        'RTF'           =>  'Mail\\Compose\\BodyParser\\RTF',
-        'StrongText'    =>  'Mail\\Compose\\BodyParser\\StrongText',
-        'Text'          =>  'Mail\\Compose\\BodyParser\\Text',
-    ];
+    protected static $BodyParsers
+        = [
+            'File'       => 'Mail\\Compose\\BodyParser\\File',
+            'HTML'       => 'Mail\\Compose\\BodyParser\\HTML',
+            'RTF'        => 'Mail\\Compose\\BodyParser\\RTF',
+            'StrongText' => 'Mail\\Compose\\BodyParser\\StrongText',
+            'Text'       => 'Mail\\Compose\\BodyParser\\Text',
+        ];
 
-    protected static $PartIterators = [
-        'BaseIterator' => 'Mail\\Compose\\PartIterator\\BaseIterator'
-    ];
+    protected static $PartIterators
+        = [
+            'BaseIterator' => 'Mail\\Compose\\PartIterator\\BaseIterator'
+        ];
 
 //    protected static $Tags = [
 //        MailPart::DATA_PART_TYPE => [
@@ -74,227 +78,227 @@ class MailConvert
 //        ]
 //    ];
 
-    protected static $Tags = [
-        'header' => [
-            'data_getter'       => [
-                'part_type'=>MailPart::COMMON_PART_TYPE,
-                'class' => 'Mail\\Compose\\DataGetter\\HeaderDataGetter'
+    protected static $Tags
+        = [
+            'header' => [
+                'data_getter'       => [
+                    'part_type' => MailPart::COMMON_PART_TYPE,
+                    'class'     => 'Mail\\Compose\\DataGetter\\HeaderDataGetter'
+                ],
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
             ],
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\HeaderUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\HeaderConfigurator'
-        ],
-        'text' => [
-            'data_getter'       => [
-                'part_type'=>MailPart::DATA_PART_TYPE,
-                'class' => 'Mail\\Compose\\DataGetter\\TextDataGetter'
+            'text'   => [
+                'data_getter'       => [
+                    'part_type' => MailPart::DATA_PART_TYPE,
+                    'class'     => 'Mail\\Compose\\DataGetter\\TextDataGetter'
+                ],
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
             ],
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\TextConfigurator'
-        ],
+            'info'   => [
+                'data_getter'       => [
+                    'part_type' => MailPart::DATA_PART_TYPE,
+                    'class'     => 'Mail\\Compose\\DataGetter\\TextDataGetter'
+                ],
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+            ],
+            'link'   => [
+                'data_getter'       => [
+                    'part_type' => MailPart::DATA_PART_TYPE,
+                    'class'     => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter'
+                ],
+                'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
+                'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
+            ]
+        ];
 
-        'info' => [
-            'data_getter'       => [
-                'part_type' => MailPart::DATA_PART_TYPE,
-                'class' => 'Mail\\Compose\\DataGetter\\TextDataGetter'
-            ],
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
-        ],
-
-        'link' => [
-            'data_getter'       => [
-                'part_type' => MailPart::DATA_PART_TYPE,
-                'class' => 'Mail\\Compose\\DataGetter\\AttachmentDataGetter'
-            ],
-            'data_uniter'       => 'Mail\\Compose\\DataUniter\\BaseUniter',
-            'data_configurator' => 'Mail\\Compose\\DataConfigurator\\BaseConfigurator'
-        ]
-    ];
-
-    protected static $typeSettings = [
-        'text'=>[
-            'plain'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'Text'
+    protected static $typeSettings
+        = [
+            'text'        => [
+                'plain'    => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'Text'
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'header'
+                    ],
                 ],
-                'data_tags'=>[
-                    'text',
-                    'header'
+                'html'     => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'HTML'
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'header'
+                    ],
                 ],
-            ],
-            'html'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'HTML'
+                'richtext' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'RTF'
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'header'
+                    ],
                 ],
-                'data_tags'=>[
-                    'text',
-                    'header'
-                ],
-            ],
-            'richtext'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'RTF'
-                ],
-                'data_tags'=>[
-                    'text',
-                    'header'
-                ],
-            ],
-            'default'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'StrongText'
-                ],
-                'data_tags'=>[
-                    'text',
-                    'header'
-                ],
-            ]
-        ],
-        'message'=>[
-            'rfc822'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'data_tags' =>[],
-                'parser' => []
-            ],
-            'delivery-status' => [
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'StrongText'
-                ],
-                'data_tags'=>[
-                    'info'
-                ],
-            ],
-            'default' => [
-                'type' => MailPart::DATA_PART_TYPE,
-                'data_tags'=>[
-                    'info'
-                ],
-            ]
-        ],
-        'multipart'=>[
-            'alternative' => [
-                'type' => MailPart::COMBINER_PART_TYPE,
-                'iterator' => [
-                    'BaseIterator' => [
-                        'order' => 'desc',
-                        'count' => 1,
-                    ]
-                ],
-                'data_tags' => [
-                    'text',
-                    'info',
-                    'header'
+                'default'  => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'StrongText'
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'header'
+                    ],
                 ]
             ],
-            'related' =>[
-                'type' => MailPart::COMBINER_PART_TYPE,
-                'iterator' => [
-                    'BaseIterator' => [
-                        'order' => 'asc',
-                        'count' => 0,
-                    ]
+            'message'     => [
+                'rfc822'          => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'data_tags' => [],
+                    'parser'    => []
                 ],
-                'data_tags' => [
-                    'text',
-                    'info',
-                    'link',
-                    'header'
+                'delivery-status' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'StrongText'
+                    ],
+                    'data_tags' => [
+                        'info'
+                    ],
+                ],
+                'default'         => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'data_tags' => [
+                        'info'
+                    ],
                 ]
             ],
-            'mixed' =>[
-                'type' => MailPart::COMBINER_PART_TYPE,
-                'iterator' => [
-                    'BaseIterator' => [
-                        'order' => 'asc',
-                        'count' => 0,
+            'multipart'   => [
+                'alternative' => [
+                    'type'      => MailPart::COMBINER_PART_TYPE,
+                    'iterator'  => [
+                        'BaseIterator' => [
+                            'order' => 'desc',
+                            'count' => 1,
+                        ]
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'info',
+                        'header'
                     ]
                 ],
-                'data_tags' => [
-                    'text',
-                    'info',
-                    'link',
-                    'header'
-                ]
-            ],
-            'report' => [
-                'type' => MailPart::COMBINER_PART_TYPE,
-                'iterator' => [
-                    'BaseIterator' => [
-                        'order' => 'asc',
-                        'count' => 0
+                'related'     => [
+                    'type'      => MailPart::COMBINER_PART_TYPE,
+                    'iterator'  => [
+                        'BaseIterator' => [
+                            'order' => 'asc',
+                            'count' => 0,
+                        ]
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'info',
+                        'link',
+                        'header'
                     ]
                 ],
-                'data_tags' => [
-                    'text',
-                    'info',
-                    'link',
-                    'header'
-                ]
-            ],
-            'parallel' =>[
-                'type' => MailPart::COMBINER_PART_TYPE,
-                'iterator' => [
-                    'BaseIterator' => [
-                        'order' => 'asc',
-                        'count' => 0
+                'mixed'       => [
+                    'type'      => MailPart::COMBINER_PART_TYPE,
+                    'iterator'  => [
+                        'BaseIterator' => [
+                            'order' => 'asc',
+                            'count' => 0,
+                        ]
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'info',
+                        'link',
+                        'header'
                     ]
                 ],
-                'data_tags' => [
-                    'text',
-                    'info'
+                'report'      => [
+                    'type'      => MailPart::COMBINER_PART_TYPE,
+                    'iterator'  => [
+                        'BaseIterator' => [
+                            'order' => 'asc',
+                            'count' => 0
+                        ]
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'info',
+                        'link',
+                        'header'
+                    ]
+                ],
+                'parallel'    => [
+                    'type'      => MailPart::COMBINER_PART_TYPE,
+                    'iterator'  => [
+                        'BaseIterator' => [
+                            'order' => 'asc',
+                            'count' => 0
+                        ]
+                    ],
+                    'data_tags' => [
+                        'text',
+                        'info'
+                    ]
+                ],
+            ],
+            'audio'       => [
+                'default' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'File'
+                    ],
+                    'data_tags' => [
+                        'link'
+                    ],
+                ],
+            ],
+            'video'       => [
+                'default' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'File'
+                    ],
+                    'data_tags' => [
+                        'link'
+                    ],
                 ]
             ],
-        ],
-        'audio' => [
-            'default' => [
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'File'
-                ],
-                'data_tags'=>[
-                    'link'
-                ],
+            'image'       => [
+                'default' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'File'
+                    ],
+                    'data_tags' => [
+                        'link'
+                    ],
+                ]
             ],
-        ],
-        'video'=>[
-            'default'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'File'
-                ],
-                'data_tags'=>[
-                    'link'
-                ],
-            ]
-        ],
-        'image'=>[
-            'default'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'File'
-                ],
-                'data_tags'=>[
-                    'link'
-                ],
-            ]
-        ],
-        'application'=>[
-            'default'=>[
-                'type' => MailPart::DATA_PART_TYPE,
-                'parser' => [
-                    'File'
-                ],
-                'data_tags'=>[
-                    'link'
-                ],
-            ]
-        ],
-    ];
+            'application' => [
+                'default' => [
+                    'type'      => MailPart::DATA_PART_TYPE,
+                    'parser'    => [
+                        'File'
+                    ],
+                    'data_tags' => [
+                        'link'
+                    ],
+                ]
+            ],
+        ];
 
 
     public static function  getConfigurators()
@@ -307,8 +311,7 @@ class MailConvert
 //                $ret[$tag] = new $config['data_configurator']();
 //            }
 //        }
-        foreach(static::$Tags as $tag=>$config)
-        {
+        foreach (static::$Tags as $tag => $config) {
             $ret[$tag] = new $config['data_configurator']();
         }
 
@@ -325,21 +328,22 @@ class MailConvert
      *
      * @param ComposeStrategyInterface $composeStrategy
      */
-    public function __construct( ComposeStrategyInterface $composeStrategy )
+    public function __construct(ComposeStrategyInterface $composeStrategy)
     {
         $this->composeMailStrategy = $composeStrategy;
     }
 
 
-
     /**
      * @param AttachmentFiles|AttachmentInfo|AttachmentNone $attachmentProcessingType
+     *
      * @throws
      */
     public function setAttachmentProcessingType($attachmentProcessingType)
     {
-        if(!in_array($attachmentProcessingType,[self::AttachmentInfo,self::AttachmentFiles,self::AttachmentNone]))
-        {
+        if ( !in_array($attachmentProcessingType,
+            [self::AttachmentInfo, self::AttachmentFiles, self::AttachmentNone])
+        ) {
             throw new \Exception('Wrong attachment processing type');
         }
         $this->attachmentProcessingType = $attachmentProcessingType;
@@ -352,6 +356,7 @@ class MailConvert
      * @param ReceiveMessage $rawMail
      *
      * mail and array of attachment links
+     *
      * @return Array
      */
     public function convertMailToInternalFormat(ReceiveMessage $rawMail)
@@ -361,25 +366,22 @@ class MailConvert
 //        prn('after',$parts);
         $res = $this->composeMailStrategy->carveData($parts);
 
-        if(!isset($res['header']['message-id']))
-        {
-            $MessageId = md5( $rawMail -> getHeaders() -> toString() . $rawMail -> getContent() );
+        if ( !isset($res['header']['message-id'])) {
+            $MessageId = md5($rawMail->getHeaders()->toString()
+                . $rawMail->getContent());
 
-            if ( isset( $_SERVER[ "SERVER_NAME" ] ) )
-            {
-                $hostName = $_SERVER[ "SERVER_NAME" ];
+            if (isset($_SERVER["SERVER_NAME"])) {
+                $hostName = $_SERVER["SERVER_NAME"];
+            } else {
+                $hostName = php_uname('NNMHost');
             }
-            else
-            {
-                $hostName = php_uname( 'NNMHost' );
-            }
-            $res['header']['message-id'] = '<' . $MessageId . '@' . $hostName . '>';
+            $res['header']['message-id']
+                = '<' . $MessageId . '@' . $hostName . '>';
         }
 //        prn($res);
 //        exit;
         return $res;
     }
-
 
 
     /**
@@ -389,11 +391,12 @@ class MailConvert
      * @param  array $mail
      *
      * mail prepared to send
+     *
      * @return SendMessage
      */
-    public function convertToSendFormat( Array $mail )
+    public function convertToSendFormat(Array $mail)
     {
-        $sendMessage = $this->composeMailStrategy->packData( $mail );
+        $sendMessage = $this->composeMailStrategy->packData($mail);
 
         $messageID = new MessageId();
         $messageID->setId();
@@ -412,57 +415,52 @@ class MailConvert
      * @param ReceiveMessage $rawMail
      *
      * common mail array format
+     *
      * @return null|MailPart
      */
-    private function parseMailParts( ReceiveMessage $rawMail )
+    private function parseMailParts(ReceiveMessage $rawMail)
     {
         $rawMailHeaders = $rawMail->getHeaders();
-        $contentType = isset( $rawMail -> content_type ) ? $rawMail -> getHeaderField( 'Content-Type' ) : 'no_content_type';
+        $contentType    = isset($rawMail->content_type)
+            ? $rawMail->getHeaderField('Content-Type') : 'no_content_type';
 
         $part = $this->configurePart($contentType);
-        if(is_null($part))
-        {
+        if (is_null($part)) {
 //            prn('first');
             return $part;
         }
 
-        if ( $rawMail -> isMultipart() )
-        {
+        if ($rawMail->isMultipart()) {
             $partResult = [];
-            try
-            {
-                foreach ( $rawMail as $rawPart )
-                {
+            try {
+                foreach ($rawMail as $rawPart) {
                     $tres = $this->parseMailParts($rawPart);
-                    if(!isset($tres))
-                    {
+                    if ( !isset($tres)) {
                         continue;
                     }
                     $partResult[] = $tres;
                 }
-            }
-            catch ( \Zend\Mail\Header\Exception\InvalidArgumentException $exc )
-            {
+            } catch (\Zend\Mail\Header\Exception\InvalidArgumentException $exc) {
             }
 
             $part->setContent($partResult);
             $part->setHeaders($rawMailHeaders);
-        }
-        else
-        {
-            $isAttachment = in_array(explode('/',$contentType)[0],$this::$attachmentTypes);
-            $partResult = $rawMail->getContent();
+        } else {
+            $isAttachment = in_array(explode('/', $contentType)[0],
+                $this::$attachmentTypes);
+            $partResult   = $rawMail->getContent();
 
-            if(in_array('Content-Transfer-Encoding', array_keys($rawMailHeaders->toArray()))&&isset($partResult))
-            {
-                $partResult = $this->decode($partResult, $rawMail->contentTransferEncoding);
+            if (in_array('Content-Transfer-Encoding',
+                    array_keys($rawMailHeaders->toArray()))
+                && isset($partResult)
+            ) {
+                $partResult = $this->decode($partResult,
+                    $rawMail->contentTransferEncoding);
                 $rawMailHeaders->removeHeader('Content-Transfer-Encoding');
             }
 
-            if($isAttachment)
-            {
-                switch($this -> attachmentProcessingType)
-                {
+            if ($isAttachment) {
+                switch ($this->attachmentProcessingType) {
                     case self::AttachmentNone:
 //                        prn('second');
                         return null;
@@ -473,22 +471,18 @@ class MailConvert
                     case self::AttachmentFiles:
                         break;
                 }
-            }
-            else
-            {
-                try
-                {
-                    $mailCharset    = $rawMail -> getHeaderField( 'content-type', 'charset' );
-                }
-                catch ( \Exception $ex )
-                {
+            } else {
+                try {
+                    $mailCharset = $rawMail->getHeaderField('content-type',
+                        'charset');
+                } catch (\Exception $ex) {
                     $mailCharset = null;
                 }
-                $partResult = $this->setMailEncoding($partResult,$mailCharset);
+                $partResult = $this->setMailEncoding($partResult, $mailCharset);
             }
         }
-        $part->setContent( $partResult );
-        $part->setHeaders( $rawMailHeaders );
+        $part->setContent($partResult);
+        $part->setHeaders($rawMailHeaders);
 
 //        prn('third');
         return $part;
@@ -496,30 +490,30 @@ class MailConvert
 
     /**
      * @param string $contentType
+     *
      * @return MailPart
      */
     private function configurePart($contentType)
     {
 //        prn($contentType);
         $contentType = explode('/', $contentType);
-        $part = null;
-        if(isset($contentType[0])&&in_array($contentType[0],array_keys($this::$typeSettings)))
-        {
-            if(isset($contentType[1])&&(isset($this::$typeSettings[$contentType[0]][$contentType[1]])))
-            {
-                $setting = $this::$typeSettings[$contentType[0]][$contentType[1]];
+        $part        = null;
+        if (isset($contentType[0])
+            && in_array($contentType[0], array_keys($this::$typeSettings))
+        ) {
+            if (isset($contentType[1])
+                && (isset($this::$typeSettings[$contentType[0]][$contentType[1]]))
+            ) {
+                $setting
+                      = $this::$typeSettings[$contentType[0]][$contentType[1]];
                 $part = new MailPart($setting['type'], $contentType);
-            }
-            elseif(isset($this::$typeSettings[$contentType[0]]['default']))
-            {
+            } elseif (isset($this::$typeSettings[$contentType[0]]['default'])) {
                 $setting = $this::$typeSettings[$contentType[0]]['default'];
-                $part = new MailPart($setting['type'], $contentType);
+                $part    = new MailPart($setting['type'], $contentType);
             }
 
-            if(isset($setting))
-            {
-                if($setting['type']==MailPart::DATA_PART_TYPE)
-                {
+            if (isset($setting)) {
+                if ($setting['type'] == MailPart::DATA_PART_TYPE) {
 //                    foreach($setting['data_tags'] as $tag)
 //                    {
 //                        $Tags = $this::$Tags;
@@ -527,19 +521,17 @@ class MailConvert
 //                        $dataGetter = new $tagSetting['data_getter']( ['tag'=>$tag] );
 //                        $part->addDataGetter($dataGetter);
 //                    }
-                    foreach($setting['parser'] as $parser)
-                    {
+                    foreach ($setting['parser'] as $parser) {
                         $Parsers = self::$BodyParsers;
-                        $parser = new $Parsers[$parser]();
+                        $parser  = new $Parsers[$parser]();
                         $part->addParser($parser);
                     }
-                }
-                elseif($setting['type']==MailPart::COMBINER_PART_TYPE)
-                {
-                    $iterator = array_keys($setting['iterator'])[0];
+                } elseif ($setting['type'] == MailPart::COMBINER_PART_TYPE) {
+                    $iterator         = array_keys($setting['iterator'])[0];
                     $iteratorSettings = $setting['iterator'][$iterator];
-                    $Iterators = $this::$PartIterators;
-                    $iterator = new $Iterators[$iterator]($iteratorSettings);
+                    $Iterators        = $this::$PartIterators;
+                    $iterator
+                                      = new $Iterators[$iterator]($iteratorSettings);
                     $part->setIterator($iterator);
 //                    foreach($setting['data_tags'] as $tag)
 //                    {
@@ -549,8 +541,7 @@ class MailConvert
 //                        $part->addDataUniter($tag, $dataUniter);
 //                    }
                 }
-                foreach($setting['data_tags'] as $tag)
-                {
+                foreach ($setting['data_tags'] as $tag) {
                     $Tags = $this::$Tags;
 //                    prn($contentType,$Tags,$setting['type'],$tag);
 //                    if(isset($Tags[$setting['type']][$tag]))
@@ -578,17 +569,16 @@ class MailConvert
 //                            break;
 //                    }
                     $tagSetting = $Tags[$tag];
-                    if($setting['type'] == MailPart::COMBINER_PART_TYPE)
-                    {
+                    if ($setting['type'] == MailPart::COMBINER_PART_TYPE) {
                         $dataUniter = new $tagSetting['data_uniter']();
                         $part->addDataUniter($tag, $dataUniter);
                     }
-                    if(in_array($tagSetting['data_getter']['part_type'],[MailPart::COMMON_PART_TYPE, $setting['type']]))
-                    {
-                        $dataGetter = new $tagSetting['data_getter']['class'](['tag' => $tag]);
+                    if (in_array($tagSetting['data_getter']['part_type'],
+                        [MailPart::COMMON_PART_TYPE, $setting['type']])) {
+                        $dataGetter
+                            = new $tagSetting['data_getter']['class'](['tag' => $tag]);
                         $part->addDataGetter($dataGetter);
                     }
-
 
                 }
             }
@@ -602,22 +592,21 @@ class MailConvert
     /**
      * decoding text
      *
-     * @param string $content content string
+     * @param string $content          content string
      * @param string $transferEncoding encoding type string
      *
      * @return string
      */
-    private function decode( $content, $transferEncoding )
+    private function decode($content, $transferEncoding)
     {
-        $transferEncoding = strtolower( $transferEncoding );
+        $transferEncoding = strtolower($transferEncoding);
 
-        switch ( $transferEncoding )
-        {
+        switch ($transferEncoding) {
             case 'base64':
-                return base64_decode( $content );
+                return base64_decode($content);
                 break;
             case 'quoted-printable':
-                return quoted_printable_decode( $content );
+                return quoted_printable_decode($content);
                 break;
             default:
                 //in case 7bit, 8bit or binary
@@ -629,7 +618,7 @@ class MailConvert
     /**
      * changing charset encoding
      *
-     * @param string $text content string
+     * @param string      $text                content string
      * @param string|null $contentTypeEncoding encoding type string
      *
      * @return string
@@ -637,26 +626,42 @@ class MailConvert
     private function setMailEncoding($text, $contentTypeEncoding = null)
     {
         // TODO: Create own method to detect text encoding
-        if(isset($contentTypeEncoding))
-        {
-            mb_detect_order(['UTF-8', 'UTF-7', 'ASCII', $contentTypeEncoding, 'EUC-JP','SJIS', 'eucJP-win', 'SJIS-win', 'JIS', 'ISO-2022-JP']);
-        }
-        else
-        {
-            mb_detect_order(['UTF-8', 'UTF-7', 'ASCII', 'EUC-JP','SJIS', 'eucJP-win', 'SJIS-win', 'JIS', 'ISO-2022-JP']);
+        if (isset($contentTypeEncoding)) {
+            mb_detect_order([
+                'UTF-8',
+                'UTF-7',
+                'ASCII',
+                $contentTypeEncoding,
+                'EUC-JP',
+                'SJIS',
+                'eucJP-win',
+                'SJIS-win',
+                'JIS',
+                'ISO-2022-JP'
+            ]);
+        } else {
+            mb_detect_order([
+                'UTF-8',
+                'UTF-7',
+                'ASCII',
+                'EUC-JP',
+                'SJIS',
+                'eucJP-win',
+                'SJIS-win',
+                'JIS',
+                'ISO-2022-JP'
+            ]);
         }
         $currentCharset = mb_internal_encoding();
-        $textEncoding = mb_detect_encoding($text);
+        $textEncoding   = mb_detect_encoding($text);
 
-        if($currentCharset != $textEncoding)
-        {
-            if(isset($contentTypeEncoding))
-            {
-                $text = mb_convert_encoding($text,$currentCharset,$contentTypeEncoding);
-            }
-            else
-            {
-                $text = mb_convert_encoding($text, $currentCharset, $textEncoding);
+        if ($currentCharset != $textEncoding) {
+            if (isset($contentTypeEncoding)) {
+                $text = mb_convert_encoding($text, $currentCharset,
+                    $contentTypeEncoding);
+            } else {
+                $text = mb_convert_encoding($text, $currentCharset,
+                    $textEncoding);
             }
         }
         return $text;

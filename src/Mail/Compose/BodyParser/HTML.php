@@ -8,7 +8,6 @@
 
 namespace Mail\Compose\BodyParser;
 
-
 use Zend\Mail\Headers;
 
 class HTML implements ParserInterface
@@ -18,9 +17,9 @@ class HTML implements ParserInterface
     /**
      * parsing text
      *
-     * @param  string $data
-     * @param  Headers $header order witch parts should be seen
-     * @param  Array $additionalParams array of additional params
+     * @param string  $data
+     * @param Headers $header           order witch parts should be seen
+     * @param Array   $additionalParams array of additional params
      *
      * @return Array
      */
@@ -37,23 +36,18 @@ class HTML implements ParserInterface
 //        $data = '<div id="mail-body">'.$data.'<div id="mail-body">';
 
         //remove links
-        $data = preg_replace('/<link(.*?)(\\/|\\\\)>/is','',$data);
-        $data = preg_replace('/<link(.*?)>/is','',$data);
-        $data = preg_replace('/<script(.*?)>(.*?)<(\\/|\\\\)script>/is','',$data);
-        $data = preg_replace('/<script(.*?)>/is','',$data);
+        $data = preg_replace('/<link(.*?)(\\/|\\\\)>/is', '', $data);
+        $data = preg_replace('/<link(.*?)>/is', '', $data);
+        $data = preg_replace('/<script(.*?)>(.*?)<(\\/|\\\\)script>/is', '', $data);
+        $data = preg_replace('/<script(.*?)>/is', '', $data);
 
         //remove inline scripts
-        $data = preg_replace('/<script>(.*)/is','',$data);
+        $data = preg_replace('/<script>(.*)/is', '', $data);
 
         //remove frameset and frame tags
-        $data = preg_replace('/<frameset>(.*?)<\/frameset>/is','',$data);
-        $data = preg_replace('/<frameset>(.*)/is','',$data);
-        $data = preg_replace('/<frame(.*?)>/is','',$data);
-
-
-
-
-
+        $data = preg_replace('/<frameset>(.*?)<\/frameset>/is', '', $data);
+        $data = preg_replace('/<frameset>(.*)/is', '', $data);
+        $data = preg_replace('/<frame(.*?)>/is', '', $data);
 
         return $data;
     }

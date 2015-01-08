@@ -3,7 +3,7 @@
 namespace Mail\Send;
 
 use Mail\Compose\MailConvert;
-use \Zend\Mail\Storage\Message;
+use Zend\Mail\Storage\Message;
 
 /**
  * Description of BaseMailSend
@@ -12,7 +12,6 @@ use \Zend\Mail\Storage\Message;
  */
 abstract class BaseTransport
 {
-
     /**
      * @var Object
      */
@@ -32,15 +31,15 @@ abstract class BaseTransport
      * initialize sending service by mail convertor and array of setting
      * for mail transport
      *
-     * @param array $setting
+     * @param array       $setting
      * @param MailConvert $convertor
      *
      * @throws \Exception
      */
-    public function __construct( Array $setting, MailConvert $convertor )
+    public function __construct(Array $setting, MailConvert $convertor)
     {
-        $this -> setting = $setting;
-        $this -> convertor = $convertor;
+        $this->setting = $setting;
+        $this->convertor = $convertor;
     }
 
     /**
@@ -61,58 +60,46 @@ abstract class BaseTransport
      * send mail
      *
      * array or object of type you set while initialize service
-     * @param  Object|array $mail
+     * @param Object|array $mail
      *
      * @throws \Exception $ex
      *
      * @return Mail
      */
-    public function sendMail( $mail )
+    public function sendMail($mail)
     {
-        if(!is_array($mail))
-        {
-            try
-            {
+        if (!is_array($mail)) {
+            try {
                 $arrayMail = $mail->toArray();
-            }
-            catch(\Exception $ex)
-            {
+            } catch (\Exception $ex) {
                 throw new \Exception('impossible to convert '.get_class($mail).' to mail array');
             }
-        }
-        else
-        {
+        } else {
             $arrayMail = $mail;
         }
 
-        $this -> openTransport();
+        $this->openTransport();
 
         $header = $arrayMail['header'];
 
-        $sendingMail = $this -> convertor -> convertToSendFormat( $arrayMail );
+        $sendingMail = $this->convertor->convertToSendFormat($arrayMail);
 
 //        prn($sendingMail->toString());
 
-        try
-        {
-            $this -> transport -> send( $sendingMail );
-        }
-        catch ( \Exception $ex )
-        {
+        try {
+            $this->transport->send($sendingMail);
+        } catch (\Exception $ex) {
             //create checking exception to output normal view, that describes problem to user
             throw new \Exception('Mail format exception. Asc administrator to fix the problem');
         }
 
-        $header['message-id'] = $sendingMail -> getHeaders() -> toArray()['Message-ID'];
-        if(is_array($mail))
-        {
+        $header['message-id'] = $sendingMail->getHeaders()->toArray()['Message-ID'];
+        if (is_array($mail)) {
             $mail['header'] = $header;
+        } else {
+            $mail->header = $header;
         }
-        else
-        {
-            $mail -> header = $header;
-        }
-        $this -> closeTransport();
+        $this->closeTransport();
 
         return $mail;
     }
