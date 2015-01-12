@@ -80,7 +80,7 @@ abstract class BaseTransport
 //        $uids = ['3AB4A466-FC5E-11E3-89A8-00215AD99F24'];
         foreach ($uids as $uid) {
             try {
-                //                prn($uid);
+//                prn($uid);
                 $rawMail = $this->transport->getMessage($this->transport->getNumberByUniqueId($uid));
 //                prn($rawMail->getContent());
 

@@ -21,9 +21,23 @@ class Text implements ParserInterface
      *
      * @return Array
      */
+
+    protected $additionalCSSWord = [
+        "<link href='/css/themes/view/mail.css' media='screen' rel='stylesheet' type='text/css'>",
+        "<link href='/css/themes/view/font.css' media='screen' rel='stylesheet' type='text/css'>",
+    ];
+
     public function parse($data, $header, $additionalParams = null)
     {
         // TODO: Implement parse() method.
+
+        $header = '';
+        foreach ($this->additionalCSSWord as $css) {
+            $header = $header.$css;
+        }
+
+        $data = "<!DOCTYPE html><html><head>$header</head><body><div class='data'>$data</div></body></html>";
+
         return $data;
     }
 }
