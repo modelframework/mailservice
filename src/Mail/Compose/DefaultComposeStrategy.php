@@ -17,6 +17,7 @@ use Zend\Mime\Part;
  */
 class DefaultComposeStrategy implements ComposeStrategyInterface
 {
+
     protected $attachmentContentTypes = [
         'pdf'  => 'application/pdf',
         'rar'  => 'application/rar',
@@ -36,31 +37,35 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
      * @param MailPart $mail
      *
      * return mail object of type you wish
+     *
      * @throws \Exception
      * @return Array
      */
-    public function carveData(MailPart $mail)
+    public function carveData( MailPart $mail )
     {
         //        prn($mail->dataGetters);
 //        prn($mail);
 //        prn($mail->dataUniters);
 //        exit;
-        $resArray = [];
-        if (isset($mail)) {
-            $resArray = $mail->getData();
-            $configurators = [];
-            if (is_array($resArray)) {
+        $resArray = [ ];
+        if (isset( $mail )) {
+            $resArray      = $mail->getData();
+            $configurators = [ ];
+            if (is_array( $resArray )) {
                 $configurators = MailConvert::getConfigurators();
             }
             foreach ($resArray as $tag => $part) {
                 //                prn($tag,$resArray[$tag]);
                 try {
-                    $resArray[$tag] = $configurators[$tag]->configure($resArray[$tag]);
-                } catch (\Exception $ex) {
-                    $exceptionMessage = isset($configurators[$tag]) ?
-                        'Internal error in '.get_class($configurators[$tag]).' configurator for mail tag '.$tag   :
-                        'Configurator for tag '.$tag.' doesn\'t set';
-                    throw new \Exception($exceptionMessage);
+                    $resArray[ $tag ] =
+                        $configurators[ $tag ]->configure( $resArray[ $tag ] );
+                } catch ( \Exception $ex ) {
+                    $exceptionMessage = isset( $configurators[ $tag ] ) ?
+                        'Internal error in ' .
+                        get_class( $configurators[ $tag ] ) .
+                        ' configurator for mail tag ' . $tag :
+                        'Configurator for tag ' . $tag . ' doesn\'t set';
+                    throw new \Exception( $exceptionMessage );
                 }
             }
         }
@@ -78,64 +83,66 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
      *
      * return array of data that will be converted to
      * send message
+     *
      * @return Array
      */
-    public function packData($mailArray)
+    public function packData( $mailArray )
     {
         $mimeMail = new Message();
-        $textPart = $this->packText($mailArray['text'], $mailArray['header']['content-type']);
-        unset($mailArray['header']['content-type']);
-        $attachmentParts = $this->packAttachments($mailArray['link']);
-        if (count($attachmentParts)) {
-            $mimeMail->addPart($textPart);
+        $textPart = $this->packText( $mailArray[ 'text' ],
+            $mailArray[ 'header' ][ 'content-type' ] );
+        unset( $mailArray[ 'header' ][ 'content-type' ] );
+        $attachmentParts = $this->packAttachments( $mailArray[ 'link' ] );
+        if (count( $attachmentParts )) {
+            $mimeMail->addPart( $textPart );
             foreach ($attachmentParts as $part) {
-                $mimeMail->addPart($part);
+                $mimeMail->addPart( $part );
             }
         } else {
-            $mimeMail->addPart($textPart);
+            $mimeMail->addPart( $textPart );
         }
         $returnMail = new SendMessage();
-        $returnMail->setBody($mimeMail);
+        $returnMail->setBody( $mimeMail );
 
-        foreach ($mailArray['header'] as $header => $value) {
+        foreach ($mailArray[ 'header' ] as $header => $value) {
             switch ($header) {
                 case 'references' :
-                    if (is_array($value)) {
+                    if (is_array( $value )) {
                         $res = '';
                         foreach ($value as $reference) {
-                            $res .= $reference.' ';
+                            $res .= $reference . ' ';
                         }
-                    } elseif (is_string($value)) {
+                    } elseif (is_string( $value )) {
                         $res = $value;
                     } else {
                         continue;
                     }
                     $headers = $returnMail->getHeaders();
-                    $headers->addHeaderLine($header, $res);
-                    $returnMail->setHeaders($headers);
+                    $headers->addHeaderLine( $header, $res );
+                    $returnMail->setHeaders( $headers );
                     break;
                 case 'bcc':
-                    $returnMail->addBcc($value);
+                    $returnMail->addBcc( $value );
                     break;
                 case 'cc':
-                    $returnMail->addCc($value);
+                    $returnMail->addCc( $value );
                     break;
                 case 'to':
-                    $returnMail->addTo($value);
+                    $returnMail->addTo( $value );
                     break;
                 case 'from':
-                    $returnMail->addFrom($value);
+                    $returnMail->addFrom( $value );
                     break;
                 case 'reply-to':
-                    $returnMail->addReplyTo($value);
+                    $returnMail->addReplyTo( $value );
                     break;
                 case 'subject':
-                    $returnMail->setSubject($value);
+                    $returnMail->setSubject( $value );
                     break;
                 default:
                     $headers = $returnMail->getHeaders();
-                    $headers->addHeaderLine($header, $value);
-                    $returnMail->setHeaders($headers);
+                    $headers->addHeaderLine( $header, $value );
+                    $returnMail->setHeaders( $headers );
                     break;
             }
         }
@@ -150,9 +157,9 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
      *
      * @return bool
      */
-    public function isHTML($text)
+    public function isHTML( $text )
     {
-        $tempText = strip_tags($text);
+        $tempText = strip_tags( $text );
         if ($text == $tempText) {
             return false;
         }
@@ -162,35 +169,37 @@ class DefaultComposeStrategy implements ComposeStrategyInterface
 
 ///////////////////////////////////////Data Packers//////////////////////////////////////
 
-
-    protected function packAttachments($attachment)
+    protected function packAttachments( $attachment )
     {
-        $parts = [];
-        if (is_array($attachment)) {
+        $parts = [ ];
+        if (is_array( $attachment )) {
             foreach ($attachment as $name => $content) {
-                $ext = explode('.', $name);
-                $ext = $ext[count($ext)-1];
-                $contentType = isset($this->attachmentContentTypes[$ext]) ? $this->attachmentContentTypes[$ext] : Mime::TYPE_OCTETSTREAM;
-                $part = new Part($content);
-                $part->type = $contentType.'; name='.$name;
-                $part->disposition = 'attachment; filename='.$name;
-                $part->encoding = 'base64';
-                $parts[] = $part;
+                $ext               = explode( '.', $name );
+                $ext               = $ext[ count( $ext ) - 1 ];
+                $contentType       =
+                    isset( $this->attachmentContentTypes[ $ext ] ) ?
+                        $this->attachmentContentTypes[ $ext ] :
+                        Mime::TYPE_OCTETSTREAM;
+                $part              = new Part( $content );
+                $part->type        = $contentType . '; name=' . $name;
+                $part->disposition = 'attachment; filename=' . $name;
+                $part->encoding    = 'base64';
+                $parts[ ]          = $part;
             }
         }
 
         return $parts;
     }
 
-    protected function packText($text, $contentType)
+    protected function packText( $text, $contentType )
     {
         if ($contentType == 'text/html') {
-            $part = new Part($text);
-            $part->type = Mime::TYPE_HTML;
+            $part          = new Part( $text );
+            $part->type    = Mime::TYPE_HTML;
             $part->charset = mb_internal_encoding();
         } else {
-            $part = new Part($text);
-            $part->type = Mime::TYPE_TEXT;
+            $part          = new Part( $text );
+            $part->type    = Mime::TYPE_TEXT;
             $part->charset = mb_internal_encoding();
         }
 

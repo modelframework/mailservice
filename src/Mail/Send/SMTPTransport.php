@@ -29,6 +29,7 @@ class SMTPTransport extends BaseTransport
             $this->transport->setOptions(new SmtpOptions($this->setting['protocol_settings']));
         } catch (\Exception $ex) {
             throw new \Exception('Wrong mail server send connection. Check connection settings or asc administrator');
+//            throw $ex;
         }
     }
 

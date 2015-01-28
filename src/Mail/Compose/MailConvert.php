@@ -434,14 +434,18 @@ class MailConvert
             $partResult = [];
             try {
                 foreach ($rawMail as $rawPart) {
+//                    prn($rawPart);
                     $tres = $this->parseMailParts($rawPart);
+//                    prn($tres);
                     if ( !isset($tres)) {
                         continue;
                     }
                     $partResult[] = $tres;
                 }
             } catch (\Zend\Mail\Header\Exception\InvalidArgumentException $exc) {
+//                prn($exc->getMessage());
             }
+//            prn($partResult);
 
             $part->setContent($partResult);
             $part->setHeaders($rawMailHeaders);

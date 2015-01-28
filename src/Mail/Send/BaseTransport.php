@@ -91,6 +91,7 @@ abstract class BaseTransport
         } catch (\Exception $ex) {
             //create checking exception to output normal view, that describes problem to user
             throw new \Exception('Mail format exception. Asc administrator to fix the problem');
+//            throw $ex;
         }
 
         $header['message-id'] = $sendingMail->getHeaders()->toArray()['Message-ID'];

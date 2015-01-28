@@ -120,6 +120,7 @@ class MailPart
     {
         $resArray = [];
         $data = $this->content;
+//        prn($this->type,$this->content,$this->contentType);
         if ($this->type == self::DATA_PART_TYPE) {
             foreach ($this->parsers as $parser) {
                 $data = $parser->parse($data, $this->headers);
@@ -138,7 +139,7 @@ class MailPart
 
     protected function uniteData($data)
     {
-        //        prn('part uniter', $data);
+//                prn('part uniter', $data);
         $validKeys = array_keys($this->dataUniters);
 //        prn('valid uniters keys',$validKeys);
         $result = [];
