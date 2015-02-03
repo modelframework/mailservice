@@ -50,6 +50,7 @@ class AttachmentDataGetter extends BaseDataGetter
 //        fwrite($file, $content);
 //        fclose($file);
 
-        return [ $fileName => $content ];
+//        return [ $fileName => $content ];
+        return [ $fileName => '' ];
     }
 }

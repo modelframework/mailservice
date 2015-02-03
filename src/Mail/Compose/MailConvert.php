@@ -206,7 +206,7 @@ class MailConvert
                     'data_tags' => [
                         'text',
                         'info',
-                        'link',
+                        //                        'link',
                         'header'
                     ]
                 ],
@@ -221,7 +221,7 @@ class MailConvert
                     'data_tags' => [
                         'text',
                         'info',
-                        'link',
+                        //                        'link',
                         'header'
                     ]
                 ],
@@ -236,7 +236,7 @@ class MailConvert
                     'data_tags' => [
                         'text',
                         'info',
-                        'link',
+                        //                        'link',
                         'header'
                     ]
                 ],
@@ -261,7 +261,7 @@ class MailConvert
                         'File'
                     ],
                     'data_tags' => [
-                        'link'
+                        //                        'link'
                     ],
                 ],
             ],
@@ -272,7 +272,7 @@ class MailConvert
                         'File'
                     ],
                     'data_tags' => [
-                        'link'
+                        //                        'link'
                     ],
                 ]
             ],
@@ -283,7 +283,7 @@ class MailConvert
                         'File'
                     ],
                     'data_tags' => [
-                        'link'
+                        //                        'link'
                     ],
                 ]
             ],
@@ -294,7 +294,7 @@ class MailConvert
                         'File'
                     ],
                     'data_tags' => [
-                        'link'
+                        //                        'link'
                     ],
                 ]
             ],
@@ -364,8 +364,12 @@ class MailConvert
 //        prn('before');
         $parts = $this->parseMailParts($rawMail);
 //        prn('after',$parts);
-        $res = $this->composeMailStrategy->carveData($parts);
-
+        if(isset($parts)) {
+            $res = $this->composeMailStrategy->carveData( $parts );
+        }
+        else{
+            $res = [];
+        }
         if ( !isset($res['header']['message-id'])) {
             $MessageId = md5($rawMail->getHeaders()->toString()
                 . $rawMail->getContent());

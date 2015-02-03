@@ -135,13 +135,16 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
 
         //        $uids = ['3AB4A466-FC5E-11E3-89A8-00215AD99F24'];
 
-        $resUids = [];
+        $resUids = [ ];
+        $count   = 0;
+        prn( 'total count', count( $uids ) );
         foreach ($uids as $uid) {
             //            prn( 'outside' );
             $storeMail = $this->storage->find( [
                 'protocol_ids.' . $settingID => $this->getFullUid( $uid )
             ] )->current();
             if (!isset( $storeMail )) {
+                prn( 'new mail' );
                 $storeMail =
                     $this->getModelServiceVerify()->get( $this->storeModel );
                 //                prn( 'inside', $storeMail );
@@ -168,10 +171,9 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                     $storeMail->protocol_ids   = $protocolIds;
                 }
             }
-            if(!$storeMail->is_converted)
-            {
+            if (!$storeMail->is_converted) {
                 try {
-                    $convertedMail =
+                    $convertedMail           =
                         $this->convertor->convertMailToInternalFormat( $rawMail );
                     $storeMail->is_converted = true;
                 } catch ( \Exception $ex ) {
@@ -181,15 +183,29 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                 }
                 $storeMail->converted_mail = $convertedMail;
                 $storeMail->message_id     = $rawMail->message_id;
-                $storeMail->raw_content    = $rawMail->getContent();
-                $storeMail->raw_headers    =
-                    $rawMail->getHeaders()->toString();
+                $content                   = $rawMail->getContent();
+                $headers                   = $rawMail->getHeaders()->toString();
+                if (mb_check_encoding( $content, 'UTF-8' )) {
+                    $storeMail->raw_content = $content;
+                }
+                if (mb_check_encoding( $headers, 'UTF-8' )) {
+                    $storeMail->raw_headers = $headers;
+                }
+                $size = $this->checkVariableSize( $storeMail );
+                if ($size > 16777216) {
+                    $storeMail->raw_content = 'too big';
+                }
+                prn('size', $size);
+//                prn($storeMail);
+
             }
-            $resUids[] = $this->getFullUid( $uid );
+
+            prn( ++$count, $storeMail->message_id );
+            $this->storage->save( $storeMail );
+            $resUids[ ] = $this->getFullUid( $uid );
 
 //            prn( $storeMail );
 //            exit;
-            $this->storage->save( $storeMail );
 
         }
 //        exit;
@@ -209,6 +225,13 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
     protected function findRootFolder()
     {
         $this->rootFolder = '';
+    }
+
+    protected function checkVariableSize( $var )
+    {
+        $start_memory = memory_get_usage();
+        $tmp          = unserialize( serialize( $var ) );
+        return memory_get_usage() - $start_memory;
     }
 
     //return null if protocol doesn't support work with folders, in other way it returns \RecursiveIteratorIterator
