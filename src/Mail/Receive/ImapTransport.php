@@ -13,7 +13,7 @@ use RecursiveIteratorIterator;
  */
 class ImapTransport extends BaseTransport
 {
-    protected $mainFolder = null;
+    protected $rootFolder = null;
 
     //
     protected function fetchFolders()
@@ -26,6 +26,28 @@ class ImapTransport extends BaseTransport
     {
         parent::openTransport();
 
+        $resUids = parent::fetchAll($exceptProtocolUids, $type);
+
+        parent::closeTransport();
+
+        return $resUids;
+    }
+
+    protected function prepareExceptUids($exceptProtocolUids)
+    {
+        foreach ($exceptProtocolUids as $key => $pUid) {
+            //            prn($mainFolder == substr( $pUid, 0, strlen( $mainFolder ) ));
+            if ($this->rootFolder == substr($pUid, 0, strlen($this->rootFolder))) {
+                $exceptProtocolUids[ $key ] = substr($pUid, strlen($this->rootFolder));
+            } else {
+                unset($exceptProtocolUids[ $key ]);
+            }
+        }
+        return $exceptProtocolUids;
+    }
+
+    protected function findRootFolder()
+    {
         $folders      = new \RecursiveIteratorIterator($this->transport->getFolders(), \RecursiveIteratorIterator::SELF_FIRST);
         $biggestCount = 0;
         foreach ($folders as $folder) {
@@ -35,44 +57,25 @@ class ImapTransport extends BaseTransport
                     $newBiggestCount = count($this->transport->getUniqueId());
                     if ($biggestCount < $newBiggestCount) {
                         $biggestCount       = $newBiggestCount;
-                        $this->mainFolder = $folder;
+                        $this->rootFolder = $folder;
                     }
                 }
             } catch (\Exception $ex) {
             }
         }
 
-        if (isset($this->mainFolder) && ($biggestCount > 0)) {
+        if (isset($this->rootFolder) && ($biggestCount > 0)) {
             try {
-                $this->transport->selectFolder($this->mainFolder->getGlobalName());
+                $this->transport->selectFolder($this->rootFolder->getGlobalName());
             } catch (\Exception $ex) {
             }
         } else {
             return array();
         }
-
-        foreach ($exceptProtocolUids as $key => $pUid) {
-            //            prn($mainFolder == substr( $pUid, 0, strlen( $mainFolder ) ));
-            if ($this->mainFolder == substr($pUid, 0, strlen($this->mainFolder))) {
-                $exceptProtocolUids[ $key ] = substr($pUid, strlen($this->mainFolder));
-            } else {
-                unset($exceptProtocolUids[ $key ]);
-//                $exceptProtocolUids[ $key ] = null;
-            }
-        }
-        $mailArray = parent::fetchAll($exceptProtocolUids, $type);
-
-        foreach ($mailArray as $key => $mail) {
-            $mail['protocol_ids'][$this->setting[ 'id' ]] = $this->mainFolder.$mail['protocol_ids'][$this->setting[ 'id' ]];
-            $mailArray[$key] = $mail;
-        }
-        parent::closeTransport();
-
-        return $mailArray;
     }
 
     protected function getSettingUid($uid)
     {
-        return [ $this->setting->id() => $this->mainFolder.$uid ];
+        return [ $this->setting->id() => $this->rootFolder.$uid ];
     }
 }

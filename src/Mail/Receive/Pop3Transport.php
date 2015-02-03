@@ -21,9 +21,10 @@ class Pop3Transport extends BaseTransport
     {
         parent::openTransport();
 
-        $mailArray = parent::fetchAll($exceptProtocolUids);
+        $resUids = parent::fetchAll($exceptProtocolUids);
+
         parent::closeTransport();
 
-        return $mailArray;
+        return $resUids;
     }
 }

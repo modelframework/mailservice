@@ -5,6 +5,8 @@ namespace Mail;
 use Mail\Compose\DefaultComposeStrategy;
 use ModelFramework\GatewayService\GatewayServiceAwareInterface;
 use ModelFramework\GatewayService\GatewayServiceAwareTrait;
+use ModelFramework\ModelService\ModelServiceAwareInterface;
+use ModelFramework\ModelService\ModelServiceAwareTrait;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Mail\Compose\MailConvert;
@@ -15,10 +17,11 @@ use Mail\Compose\MailConvert;
  * @author KSV
  */
 class MailService implements ServiceLocatorAwareInterface, MailServiceInterface,
-                             GatewayServiceAwareInterface
+                             GatewayServiceAwareInterface,
+                             ModelServiceAwareInterface
 {
 
-    use GatewayServiceAwareTrait;
+    use GatewayServiceAwareTrait, ModelServiceAwareTrait;
 
     const PURPOSE_SEND = 'Send';
     const PURPOSE_RECEIVE = 'Receive';
@@ -63,6 +66,7 @@ class MailService implements ServiceLocatorAwareInterface, MailServiceInterface,
         $settingArray[ 'id' ] = $settingId;
         $transport            = new $transportName( $settingArray, $convertor );
         $transport->setGatewayService( $this->getGatewayServiceVerify() );
+        $transport->setModelService( $this->getModelServiceVerify() );
 
         return $transport;
     }
