@@ -80,9 +80,9 @@ abstract class BaseTransport implements GatewayServiceAwareInterface
         $uids      = $this->transport->getUniqueId();
         $uids      = array_diff($uids, $exceptProtocolUids);
         $this->lastSyncSuccessful = true;
-        $storeGW = $this->getGatewayServiceVerify()->get($this->storeModel);
-        prn($storeGW);
-        exit;
+//        $storeGW = $this->getGatewayServiceVerify()->get($this->storeModel);
+//        prn($storeGW);
+//        exit;
 
 //        $uids = ['3AB4A466-FC5E-11E3-89A8-00215AD99F24'];
         foreach ($uids as $uid) {
