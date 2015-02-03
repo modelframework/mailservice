@@ -37,8 +37,6 @@ class ImapTransport extends BaseTransport
                         $biggestCount       = $newBiggestCount;
                         $this->mainFolder = $folder;
                     }
-                } else {
-                    continue;
                 }
             } catch (\Exception $ex) {
             }

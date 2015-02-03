@@ -3,6 +3,8 @@
 namespace Mail\Send;
 
 use Mail\Compose\MailConvert;
+use ModelFramework\GatewayService\GatewayServiceAwareInterface;
+use ModelFramework\GatewayService\GatewayServiceAwareTrait;
 use Zend\Mail\Storage\Message;
 
 /**
@@ -10,8 +12,10 @@ use Zend\Mail\Storage\Message;
  *
  * @author KSV
  */
-abstract class BaseTransport
+abstract class BaseTransport implements GatewayServiceAwareInterface
 {
+    use GatewayServiceAwareTrait;
+
     /**
      * @var Object
      */
