@@ -89,11 +89,12 @@ abstract class BaseTransport
 //                exit;
 
                 $newMail['protocol_ids'] = [ $this->setting[ 'id' ] => $uid ];
-                $header_id = $newMail['header']['message-id'];
+                $header_id = $newMail['header' ][ 'message-id' ];
+                prn( 'successful got ' . $uid, $header_id );
 
                 $mailArray[ $header_id ] = $newMail;
-            } catch (\Exception $ex) {
-                //                prn($ex->getMessage());
+            } catch ( \Exception $ex ) {
+                prn( 'problem got ' . $uid, $ex->getMessage() );
 //                exit;
                 $this->lastSyncSuccessful = false;
             }

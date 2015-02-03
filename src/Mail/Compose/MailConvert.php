@@ -398,12 +398,12 @@ class MailConvert
     {
         $sendMessage = $this->composeMailStrategy->packData($mail);
 
-        $messageID = new MessageId();
-        $messageID->setId();
+//        $messageID = new MessageId();
+//        $messageID->setId();
 
-        $headers = $sendMessage->getHeaders();
-        $headers->addHeader($messageID);
-        $sendMessage->setHeaders($headers);
+//        $headers = $sendMessage->getHeaders();
+//        $headers->addHeader($messageID);
+//        $sendMessage->setHeaders($headers);
 
         return $sendMessage;
     }
