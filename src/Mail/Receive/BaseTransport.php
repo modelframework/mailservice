@@ -87,34 +87,34 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
         $this->transport->close();
     }
 
-    public function convertAll( $uids )
-    {
-        $settingID = $this->setting[ 'id' ];
-        $mailArray = [ ];
-        foreach ($uids as $uid) {
-            $mail    = $this->storage->find( [
-                'protocol_ids.' . $settingID => $this->rootFolder . $uid
-            ] )->current();
-            $rawMail = new Message( [
-                'headers' => $mail->getHeaders()->toString(),
-                'content' => $mail->getContent()
-            ] );
-            $newMail = [ ];
-            try {
-                $newMail                   =
-                    $this->convertor->convertMailToInternalFormat( $rawMail );
-                $newMail[ 'protocol_ids' ] =
-                    [ $this->setting[ 'id' ] => $this->rootFolder . $uid ];
-                $header_id                 =
-                    $newMail[ 'header' ][ 'message-id' ];
-                $mailArray[ $header_id ]   = $newMail;
-                $newMail[ 'error' ]        = $mail->error;
-            } catch ( \Exception $ex ) {
-                $newMail[ 'error' ][ 'convert' ] = $ex->getMessage();
-            }
-        }
-        return $mailArray;
-    }
+    //public function convertAll( $uids )
+    //{
+    //    $settingID = $this->setting[ 'id' ];
+    //    $mailArray = [ ];
+    //    foreach ($uids as $uid) {
+    //        $mail    = $this->storage->find( [
+    //            'protocol_ids.' . $settingID => $this->rootFolder . $uid
+    //        ] )->current();
+    //        $rawMail = new Message( [
+    //            'headers'    => $mail->getHeaders()->toString(),
+    //            'content'    => $mail->getContent()
+    //        ] );
+    //        $newMail = [ ];
+    //        try {
+    //            $newMail                   =
+    //                $this->convertor->convertMailToInternalFormat( $rawMail );
+    //            $newMail[ 'protocol_ids' ] =
+    //                [ $this->setting[ 'id' ] => $this->rootFolder . $uid ];
+    //            $header_id                 =
+    //                $newMail[ 'header' ][ 'message-id' ];
+    //            $mailArray[ $header_id ]   = $newMail;
+    //            $newMail[ 'error' ]        = $mail->error;
+    //        } catch ( \Exception $ex ) {
+    //            $newMail[ 'error' ][ 'convert' ] = $ex->getMessage();
+    //        }
+    //    }
+    //    return $mailArray;
+    //}
 
     /**
      * @param array $exceptProtocolUids
@@ -128,7 +128,9 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
 
         $exceptProtocolUids = $this->prepareExceptUids( $exceptProtocolUids );
 
-        $uids                     = $this->transport->getUniqueId();
+        $uids = $this->transport->getUniqueId();
+        prn( 'root folder', $this->rootFolder->getGlobalName() );
+        prn( 'uids before', count( $uids ) );
         $uids                     = array_diff( $uids, $exceptProtocolUids );
         $this->lastSyncSuccessful = true;
         $settingID                = $this->setting[ 'id' ];
@@ -143,7 +145,8 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
             $storeMail = $this->storage->find( [
                 'protocol_ids.' . $settingID => $this->getFullUid( $uid )
             ] )->current();
-            if (!isset( $storeMail )) {
+            $rawMail   = null;
+            if (!isset( $storeMail )||!$storeMail->is_converted) {
                 prn( 'new mail' );
                 $storeMail =
                     $this->getModelServiceVerify()->get( $this->storeModel );
@@ -171,11 +174,23 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                     $storeMail->protocol_ids   = $protocolIds;
                 }
             }
-            if (!$storeMail->is_converted) {
+            if (!$storeMail->is_converted && isset($rawMail)) {
+                $convertedMail = [ ];
+
+                $content = $rawMail->getContent();
+                $headers = $rawMail->getHeaders()->toString();
+                if (mb_check_encoding( $content, 'UTF-8' )) {
+                    $storeMail->raw_content = $content;
+                }
+                if (mb_check_encoding( $headers, 'UTF-8' )) {
+                    $storeMail->raw_headers = $headers;
+                }
+
                 try {
                     $convertedMail           =
                         $this->convertor->convertMailToInternalFormat( $rawMail );
-                    $storeMail->is_converted = true;
+                    $convertedMail[ 'link' ] = [ ];
+                    $storeMail->is_converted = false;
                 } catch ( \Exception $ex ) {
                     $error                    = $storeMail->error;
                     $error[ 'convert_error' ] = $ex->getMessage();
@@ -183,21 +198,19 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                 }
                 $storeMail->converted_mail = $convertedMail;
                 $storeMail->message_id     = $rawMail->message_id;
-                $content                   = $rawMail->getContent();
-                $headers                   = $rawMail->getHeaders()->toString();
-                if (mb_check_encoding( $content, 'UTF-8' )) {
-                    $storeMail->raw_content = $content;
-                }
-                if (mb_check_encoding( $headers, 'UTF-8' )) {
-                    $storeMail->raw_headers = $headers;
-                }
+
                 $size = $this->checkVariableSize( $storeMail );
                 if ($size > 16777216) {
-                    $storeMail->raw_content = 'too big';
+                    $storeMail->raw_content =
+                        'too big, size = ' . $size . ' bytes';
                 }
-                prn('size', $size);
+                prn( 'size', $size );
 //                prn($storeMail);
 
+            } else {
+                $convertedMail             = $storeMail->converted_mail;
+                $convertedMail[ 'link' ]   = [ ];
+                $storeMail->converted_mail = $convertedMail;
             }
 
             prn( ++$count, $storeMail->message_id );
@@ -208,7 +221,6 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
 //            exit;
 
         }
-//        exit;
         return $resUids;
     }
 

@@ -54,7 +54,9 @@ class ImapTransport extends BaseTransport
             try {
                 if ($folder->isSelectable()) {
                     $this->transport->selectFolder($folder->getGlobalName());
+                    //                    prn($folder->getGlobalName());
                     $newBiggestCount = count($this->transport->getUniqueId());
+                    //                    prn($newBiggestCount);
                     if ($biggestCount < $newBiggestCount) {
                         $biggestCount       = $newBiggestCount;
                         $this->rootFolder = $folder;
