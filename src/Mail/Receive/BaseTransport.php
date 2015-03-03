@@ -216,12 +216,11 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                 $storeMail->converted_mail = $convertedMail;
             }
 
-            $storeMail->raw_content = preg_replace("/\x20\xE2/Usi",'',$storeMail->raw_content);
+            $storeMail->raw_content = iconv("utf-8", "utf-8//ignore", $storeMail->raw_content);
 
             $cm = $storeMail->converted_mail;
-            $cm['text'] = preg_replace("/\x20\xE2/Usi",'',$cm['text']);
+            $cm['text'] = iconv("utf-8", "utf-8//ignore",$cm['text']);
             $storeMail->converted_mail = $cm;
-            file_put_contents('deb_utf.txt',$cm['text']);
             prn( ++$count, 'heare', $storeMail->message_id );
             $this->storage->save( $storeMail );
             $resUids[ ] = $this->getFullUid( $uid );
