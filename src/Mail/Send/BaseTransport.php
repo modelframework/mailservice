@@ -102,7 +102,11 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
 //            throw $ex;
         }
 
-        $header['message-id'] = $sendingMail->getHeaders()->toArray()['Message-ID'];
+        $headers=$sendingMail->getHeaders()->toArray();
+        if (isset($headers['Message-ID'])){
+            $header['message-id'] = $headers['Message-ID'];
+        }
+
         if (is_array($mail)) {
             $mail['header'] = $header;
         } else {

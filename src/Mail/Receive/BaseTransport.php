@@ -189,6 +189,7 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                 try {
                     $convertedMail           =
                         $this->convertor->convertMailToInternalFormat( $rawMail );
+                    prn(count($convertedMail['text']));
                     $convertedMail[ 'link' ] = [ ];
                     $storeMail->is_converted = false;
                 } catch ( \Exception $ex ) {
@@ -197,6 +198,7 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
                     $storeMail->error         = $error;
                 }
                 $storeMail->converted_mail = $convertedMail;
+
                 $storeMail->message_id     = $rawMail->message_id;
 
                 $size = $this->checkVariableSize( $storeMail );
@@ -210,15 +212,19 @@ abstract class BaseTransport implements GatewayServiceAwareInterface,
             } else {
                 $convertedMail             = $storeMail->converted_mail;
                 $convertedMail[ 'link' ]   = [ ];
+
                 $storeMail->converted_mail = $convertedMail;
             }
 
-            prn( ++$count, $storeMail->message_id );
+            $storeMail->raw_content = preg_replace("/\x20\xE2/Usi",'',$storeMail->raw_content);
+
+            $cm = $storeMail->converted_mail;
+            $cm['text'] = preg_replace("/\x20\xE2/Usi",'',$cm['text']);
+            $storeMail->converted_mail = $cm;
+            file_put_contents('deb_utf.txt',$cm['text']);
+            prn( ++$count, 'heare', $storeMail->message_id );
             $this->storage->save( $storeMail );
             $resUids[ ] = $this->getFullUid( $uid );
-
-//            prn( $storeMail );
-//            exit;
 
         }
         return $resUids;
